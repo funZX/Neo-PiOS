@@ -1,6 +1,6 @@
-require include/core-image-crank-os.inc
+require include/core-image-neopios.inc
 
-SUMMARY = "CrankOS Minimal Image"
+SUMMARY = "Neo-PiOS Minimal Image"
 
 EXTRA_IMAGE_FEATURES = "debug-tweaks package-management tools-debug tools-profile"
 IMAGE_FEATURES:append = " x11 weston"
