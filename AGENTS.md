@@ -36,7 +36,7 @@ Pick the image that matches the desired display stack.
 
 ## Bitbake aliases
 
-Source `build/env-neopios.sh` inside the OE environment:
+Available at login (via `~/.bashrc`, auto-loaded via `~/.bash_profile` — `oe-init-build-env` sourced automatically on login shells):
 
 - `bb` = bitbake; `bb.clean` = clean/cleansstate
 - `bb.edit <recipe>` / `bb.apply` / `bb.close` = devtool modify / update-recipe / reset. `bb.apply` writes changes back into `../layers/meta-neopios` — recipe customization belongs there.

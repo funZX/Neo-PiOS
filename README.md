@@ -73,7 +73,7 @@ Notes:
 |---------|-------------|
 | `bb.shell` | Interactive shell in the container |
 
-### BitBake aliases (source `build/env-neopios.sh` inside the OE environment)
+### BitBake aliases (available at login via `~/.bashrc`, auto-loaded via `~/.bash_profile`)
 
 | Alias | Action |
 |-------|--------|

@@ -1,0 +1,5 @@
+# ~/.bash_profile - auto-init OE build environment on login (Option B)
+# Sourced by login shells; OE init sets up bitbake env and cds to build dir.
+if [ -f "$HOME/workspace/layers/openembedded-core/oe-init-build-env" ]; then
+    source "$HOME/workspace/layers/openembedded-core/oe-init-build-env" "$HOME/workspace/build" >/dev/null 2>&1
+fi
