@@ -21,9 +21,9 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 | `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, hobby/edu/thin `recipes-core/images/include/neopios-extra.inc` (`NEOPIOS_EXTRA=1`), dev `recipes-core/images/include/neopios-common-dev.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) |
 | `layers/meta-neopios/recipes-core/images/neopios-weston-image.bb` | Wayland-only image (IMAGE_FEATURES `weston`, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` | Hybrid XWayland image (IMAGE_FEATURES `x11 weston`, `weston-xwayland`, REQUIRED_DISTRO_FEATURES `wayland x11`) |
-| `layers/meta-neopios/recipes-core/images/neopios-x11-image.bb` | X11-only image (IMAGE_FEATURES `x11 x11-base`, `packagegroup-core-x11-base` + `tigervnc`/`x11vnc`, REQUIRED_DISTRO_FEATURES `x11`) |
+| `layers/meta-neopios/recipes-core/images/neopios-x11-image.bb` | X11-only image (IMAGE_FEATURES `x11 x11-base`, `packagegroup-core-x11-base` + `x11vnc`, REQUIRED_DISTRO_FEATURES `x11`) |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Minimal `EXTRA_IMAGE_FEATURES` (`package-management`) + `IMAGE_INSTALL` for all three images |
-| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `epiphany`/`freerdp`, `pulseaudio` (VNC server via weston VNC backend + `tigervnc`/`x11vnc` in x11 image) |
+| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `epiphany`/`freerdp`, `pulseaudio` (VNC server via weston VNC backend + `x11vnc` in x11 image) |
 | `layers/meta-neopios/recipes-graphics/wayland/weston_%.bbappend` | Enables Weston's VNC backend (`PACKAGECONFIG:append = " vnc"` via `neatvnc`/`libpam`, `weston --backend=vnc` / `weston.ini [core] backend=vnc-backend.so`) for weston/xwayland images |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common-dev.inc` | Dev add-on extending minimal with `tools-debug`/`tools-profile`, `post-install-logging`, empty-password and extra tools (`gdb`, `net-tools`, `iptraf`) |
 | `layers/bitbake` | BitBake build tool |
@@ -118,19 +118,19 @@ Three variants share `include/neopios-common.inc` (minimal) + `include/neopios-e
 |-------|------------------|-----------------------------|---------------|------------------------------|----------|
 | `neopios-weston-image` | `weston` | `wayland` | Wayland-only, Weston compositor | `weston` | Pure Wayland kiosk / Weston-only, strict no X11 |
 | `neopios-xwayland-image` | `x11 weston` | `wayland x11` | Hybrid XWayland | `weston-xwayland` | Hybrid — Wayland + X11 apps via XWayland |
-| `neopios-x11-image` | `x11 x11-base` (+ `splash`) | `x11` | X11-only | `packagegroup-core-x11-base` + `tigervnc`/`x11vnc` | Legacy X11 desktop, no Wayland/Weston |
+| `neopios-x11-image` | `x11 x11-base` (+ `splash`) | `x11` | X11-only | `packagegroup-core-x11-base` + `x11vnc` | Legacy X11 desktop, no Wayland/Weston |
 
 Common payload:
 
 - Minimal (`neopios-common.inc` for all three): `EXTRA_IMAGE_FEATURES = "package-management"` (`opkg`); `IMAGE_INSTALL` = `bash`, `coreutils`, `iproute2`, `iputils`, `dhcpcd`, `kmod`, `procps`, `psmisc`, `util-linux`, `openssh`, `sudo`, `tzdata-core`
-- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `epiphany`/`freerdp`, `pulseaudio`/`alsa-utils` (VNC server via weston VNC backend for weston/xwayland + `tigervnc`/`x11vnc` directly in `neopios-x11-image`)
+- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `epiphany`/`freerdp`, `pulseaudio`/`alsa-utils` (VNC server via weston VNC backend for weston/xwayland + `x11vnc` directly in `neopios-x11-image`)
 - Dev add-on (`neopios-common-dev.inc` extends minimal): adds `tools-debug`, `tools-profile`, `post-install-logging`, `allow-empty-password`/`allow-root-login`/`empty-root-password` and `gdb`, `iproute2-tc`/`ss`, `net-tools`, `iptraf`
 
 Variant notes:
 
 - `neopios-weston-image.bb`: `IMAGE_FEATURES:append = " weston"`, `IMAGE_INSTALL:append = " weston"`, `REQUIRED_DISTRO_FEATURES = "wayland"` — strict Wayland, no `x11` feature, no `weston-xwayland`.
  - `neopios-xwayland-image.bb`: `IMAGE_FEATURES:append = " x11 weston"`, `IMAGE_INSTALL:append = " weston-xwayland"`, `REQUIRED_DISTRO_FEATURES = "wayland x11"` — hybrid.
-- `neopios-x11-image.bb`: `IMAGE_FEATURES += "splash x11 x11-base"`, `IMAGE_INSTALL:append = " packagegroup-core-x11-base tigervnc x11vnc"`, `REQUIRED_DISTRO_FEATURES = "x11"` — X11-only, no Weston, VNC direct in image.
+- `neopios-x11-image.bb`: `IMAGE_FEATURES += "splash x11 x11-base"`, `IMAGE_INSTALL:append = " packagegroup-core-x11-base x11vnc"`, `REQUIRED_DISTRO_FEATURES = "x11"` — X11-only, no Weston, VNC server (share existing X display, like Weston VNC).
 
 ## Booting the image
 
