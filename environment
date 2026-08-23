@@ -6,69 +6,37 @@ function warn () { echo -e "\033[1;33m$@\033[0m"; }
 function die  () { echo -e "\033[0;31m$*\033[0m"; exit 1; }
 #####################################################################################
 
-export DOCKER_IMAGE='linux-build-nanbield'
-export DOCKER_USER=$(whoami)
-export DOCKER_UUID=$(id -u)
-export DOCKER_UGID=$(id -g)
-export DOCKER_WORKDIR=$(pwd)
-export DOCKER_PARAMS="--user ${DOCKER_USER} -v ${DOCKER_WORKDIR}:/home/${DOCKER_USER}/workspace:Z ${DOCKER_IMAGE}"
+export PODMAN_IMAGE='linux-build-wrynose'
+export PODMAN_USER=ubuntu
+export PODMAN_UUID=$(id -u)
+export PODMAN_UGID=$(id -g)
+export PODMAN_WORKDIR=$(pwd)
+export PODMAN_MOUNT="/home/${PODMAN_USER}/workspace"
+export PODMAN_PARAMS="--rm --userns=keep-id --user ${PODMAN_USER} -v ${PODMAN_WORKDIR}:${PODMAN_MOUNT} ${PODMAN_IMAGE}"
 
-export PATH="${DOCKER_WORKDIR}/:${PATH}"
+export PATH="${PODMAN_WORKDIR}/:${PATH}"
 #####################################################################################
 
-# find docker image and create if missing
-find_image=$(docker images -q ${DOCKER_IMAGE})
-if [ "${find_image}" = "" ]; then
-	docker build --build-arg "DOCKER_UUID=${DOCKER_UUID}" --build-arg "DOCKER_UGID=${DOCKER_UGID}" --build-arg "DOCKER_USER=${DOCKER_USER}" -t ${DOCKER_IMAGE} docker
-fi
-
-#####################################################################################
-
-# run docker with bb command
-function bb.run() {
-	docker run ${DOCKER_PARAMS} /home/exec.sh $@
-}
-
-export -f bb.run
+# find podman image and create if missing
+podman build --build-arg "DOCKER_UID=${PODMAN_UUID}" --build-arg "DOCKER_GID=${PODMAN_UGID}" --build-arg "DOCKER_USER=${PODMAN_USER}" -t ${PODMAN_IMAGE} -f docker/Dockerfile docker
 
 #####################################################################################
 
-# run docker with interactive shell and mounted local folder
-function bb.exec() {
-	docker run ${DOCKER_PARAMS} $@
-}
-
-export -f bb.exec
-
-#####################################################################################
-
-# run docker with interactive shell and mounted local folder
+# run podman with interactive shell and mounted local folder
 function bb.shell() {
-	docker run -it ${DOCKER_PARAMS} /bin/bash
+	podman run -it ${PODMAN_PARAMS} /bin/bash
 }
 
 export -f bb.shell
 
 #####################################################################################
 
-# remove all stopped containers
-function bb.purge() {
-	find_stop=$(docker ps -aq)
-	[ ! "${find_stop}" = "" ] && docker rm $(docker ps -aq)
-}
-
-export -f bb.purge
-
-#####################################################################################
-
 SUBMODULES="$(cat <<-EOF
-f3ba9c3726ec7b38b557100d8a2d4b6a1446a968,layers/bitbake
-941089fa63e2b38608291251d52a354f0f624926,layers/openembedded-core
-3dd5d208be018f0f676d1adfceb9c22f19ad2ffe,layers/meta-openembedded
-2e3ccdaf309a7271a47a1d95123b62bfd6294e9f,layers/meta-openrc
-aca6d4a9e7c45cb44ac02062c2750cdfa1679cc6,layers/meta-security
-ccddfb1f8b68cf9ab21bd416480f79d44a0a30f4,layers/meta-virtualization
-482d864b8f1af84915ed6a9641e80af4e49a1f63,layers/meta-raspberrypi
+0ad6c1c34a5e07a5f8dd66ab248c1e7b37b69fa9,layers/bitbake
+ef022bf82d79015802309d14c28b13373ebe53f5,layers/openembedded-core
+6bf0d8ad57b33950bab4c7f6c037e1ccb6f6e2eb,layers/meta-openembedded
+5ccbca8001083487844a244f9b616022a21215d4,layers/meta-openrc
+f62c67921474370829d24a4fa01ef88543f3906b,layers/meta-raspberrypi
 EOF
 )"
 

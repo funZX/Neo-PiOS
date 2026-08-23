@@ -1,17 +1,22 @@
+diff --git a/conf/distro/include/init-manager-openrc.inc b/conf/distro/include/init-manager-openrc.inc
+index 3778748..5c4a58e 100644
+--- a/conf/distro/include/init-manager-openrc.inc
++++ b/conf/distro/include/init-manager-openrc.inc
+@@ -1,6 +1,6 @@
+ # Use OpenRC for system initialization
+ DISTRO_FEATURES:append = " openrc"
+-DISTRO_FEATURES_BACKFILL_CONSIDERED:append = " sysvinit systemd"
++DISTRO_FEATURES_OPTED_OUT:append = " sysvinit systemd"
+ VIRTUAL-RUNTIME_init_manager ??= "openrc-init"
+ VIRTUAL-RUNTIME_initscripts ??= "openrc"
+ VIRTUAL-RUNTIME_login_manager ??= "busybox"
 diff --git a/conf/layer.conf b/conf/layer.conf
-index 80d5bc6..d0319c6 100644
+index 00fbbf7..6f17df9 100644
 --- a/conf/layer.conf
 +++ b/conf/layer.conf
 @@ -33,4 +33,4 @@ BBFILE_PRIORITY_openrc-layer = "7"
  OPENRC_INITDIR = "${sysconfdir}/init.d"
  OPENRC_CONFDIR = "${sysconfdir}/conf.d"
  
--LAYERSERIES_COMPAT_openrc-layer = "mickledore"
-+LAYERSERIES_COMPAT_openrc-layer = "mickledore nanbield"
-diff --git a/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend b/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend
-deleted file mode 100644
-index 8b6b7bc..0000000
---- a/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend
-+++ /dev/null
-@@ -1 +0,0 @@
--require docker-openrc.inc
+-LAYERSERIES_COMPAT_openrc-layer = "whinlatter"
++LAYERSERIES_COMPAT_openrc-layer = "whinlatter wrynose"
