@@ -1,3 +1,12 @@
+# neopios-x11-image.bb - X11-only image
+#
+# Strict X11 image without Wayland/Weston.
+# Requires DISTRO_FEATURE x11; does not enable Wayland.
+# Shared payload (EXTRA_IMAGE_FEATURES, common IMAGE_INSTALL) lives in
+# include/neopios-common.inc; base boot + LICENSE via include/core-image-neopios.inc.
+# Global DISTRO_FEATURES unchanged - enforcement is per-image
+# via REQUIRED_DISTRO_FEATURES + features_check.
+
 require include/core-image-neopios.inc
 require include/neopios-common.inc
 

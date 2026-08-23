@@ -1,7 +1,5 @@
 # neopios-xwayland-image.bb - Neo-PiOS Hybrid XWayland Image
 #
-# Canonical hybrid image renamed from core-image-neopios.bb via git mv
-# to preserve git history (git log --follow shows continuity).
 # Provides Wayland/Weston with X11 via weston-xwayland on top of the
 # common Neo-PiOS payload in include/neopios-common.inc.
 #
