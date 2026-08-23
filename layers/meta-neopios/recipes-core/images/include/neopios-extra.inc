@@ -17,5 +17,8 @@ IMAGE_INSTALL:append = " \
         geany man man-pages bash-completion \
         freerdp \
         pulseaudio alsa-utils \
+        wpa-supplicant iw rfkill linux-firmware-bcm43455 \
+        kernel-module-brcmfmac kernel-module-brcmutil kernel-module-cfg80211 \
+        kernel-module-mac80211 \
     ', '', d)} \
 "

@@ -2,7 +2,7 @@
 #
 # Minimal production payload shared across all Neo-PiOS distribution
 # images (weston, xwayland, x11 variants).
-# Keeps distro global DISTRO_FEATURES (opengl wayland pam) unchanged;
+# Keeps distro global DISTRO_FEATURES (opengl wayland pam wifi) unchanged;
 # per-image enforcement is via REQUIRED_DISTRO_FEATURES in each .bb.
 #
 # Yocto style: no inherit here (handled in .bb), no REQUIRED_DISTRO_FEATURES,
