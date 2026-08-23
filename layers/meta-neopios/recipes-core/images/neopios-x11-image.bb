@@ -21,6 +21,6 @@ IMAGE_FEATURES += "splash x11 x11-base"
 
 REQUIRED_DISTRO_FEATURES = "x11"
 
-IMAGE_INSTALL:append = " packagegroup-core-x11-base"
+IMAGE_INSTALL:append = " packagegroup-core-x11-base tigervnc x11vnc"
 
 QB_MEM = '${@bb.utils.contains("DISTRO_FEATURES", "opengl", "-m 512", "-m 256", d)}'

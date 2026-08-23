@@ -16,7 +16,6 @@ IMAGE_INSTALL:append = " \
         git vim nano htop usbutils \
         geany man man-pages bash-completion \
         epiphany freerdp remmina gtk-vnc \
-        ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'tigervnc x11vnc', '', d)} \
         pulseaudio alsa-utils \
     ', '', d)} \
 "
