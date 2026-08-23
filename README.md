@@ -8,7 +8,7 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 - OpenRC init (`INIT_MANAGER = "openrc"` via `meta-openrc`)
 - Three display variants sharing a common payload (`include/neopios-common.inc`):
   - `neopios-weston-image` — Wayland-only (strict, no X11) — Weston compositor only
-  - `neopios-xwayland-image` — hybrid XWayland (Wayland/Weston + X11 via `weston-xwayland`, canonical successor to `core-image-neopios`)
+  - `neopios-xwayland-image` — hybrid XWayland (Wayland/Weston + X11 via `weston-xwayland`)
   - `neopios-x11-image` — X11-only (no Wayland/Weston) — `x11`/`x11-base` + `packagegroup-core-x11-base`
 - openssh, python3, and common networking/debug tooling out of the box (shared via `neopios-common.inc`)
 - Reproducible builds: upstream layers pinned via git submodules + patches
@@ -20,7 +20,7 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 |------|---------|
 | `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (`recipes-core/images/include/neopios-common.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) |
 | `layers/meta-neopios/recipes-core/images/neopios-weston-image.bb` | Wayland-only image (IMAGE_FEATURES `weston`, REQUIRED_DISTRO_FEATURES `wayland`) |
-| `layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` | Hybrid XWayland image (IMAGE_FEATURES `x11 weston`, `weston-xwayland`, REQUIRED_DISTRO_FEATURES `wayland x11`) — renamed from `core-image-neopios.bb` via `git mv` (see `git log --follow`) |
+| `layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` | Hybrid XWayland image (IMAGE_FEATURES `x11 weston`, `weston-xwayland`, REQUIRED_DISTRO_FEATURES `wayland x11`) |
 | `layers/meta-neopios/recipes-core/images/neopios-x11-image.bb` | X11-only image (IMAGE_FEATURES `x11 x11-base`, `packagegroup-core-x11-base`, REQUIRED_DISTRO_FEATURES `x11`) |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Shared `EXTRA_IMAGE_FEATURES` + `IMAGE_INSTALL` payload for all three display images |
 | `layers/bitbake` | BitBake build tool |
@@ -55,7 +55,7 @@ bb.shell                  # interactive shell in the container (repo mounted at 
 # inside the container
 source layers/openembedded-core/oe-init-build-env build
 bitbake neopios-weston-image    # Wayland-only (strict, no X11)
-bitbake neopios-xwayland-image  # hybrid XWayland (Wayland/Weston + X11 via weston-xwayland) — canonical image
+bitbake neopios-xwayland-image  # hybrid XWayland (Wayland/Weston + X11 via weston-xwayland)
 bitbake neopios-x11-image       # X11-only (no Wayland/Weston)
 ```
 
@@ -65,7 +65,7 @@ Notes:
 - `PODMAN_WORKDIR` is captured when `environment` is sourced, so always source it from the repo root.
 - Images land in `build/tmp/deploy/images/raspberrypi4-64/`.
 - `DISTRO_FEATURES` stays `opengl wayland x11` globally (wrynose 6.0, `INIT_MANAGER = "openrc"`, `MACHINE = "raspberrypi4-64"`); per-image enforcement is via `REQUIRED_DISTRO_FEATURES` + `features_check` (see table below).
-- `neopios-xwayland-image` is the direct successor to `core-image-neopios` (preserved via `git mv`; `git log --follow -- layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` shows continuity). `core-image-neopios.bb` has been removed — use `neopios-xwayland-image`.
+
 
 ### Host-side helper (after `source environment`)
 
@@ -114,7 +114,7 @@ Three variants share `include/neopios-common.inc` (`EXTRA_IMAGE_FEATURES` + comm
 | Image | `IMAGE_FEATURES` | `REQUIRED_DISTRO_FEATURES` | Display stack | Packages (on top of common) | Use case |
 |-------|------------------|-----------------------------|---------------|------------------------------|----------|
 | `neopios-weston-image` | `weston` | `wayland` | Wayland-only, Weston compositor | `weston` | Pure Wayland kiosk / Weston-only, strict no X11 |
-| `neopios-xwayland-image` | `x11 weston` | `wayland x11` | Hybrid XWayland | `weston-xwayland` | Default / canonical — Wayland + X11 apps via XWayland (successor to `core-image-neopios`) |
+| `neopios-xwayland-image` | `x11 weston` | `wayland x11` | Hybrid XWayland | `weston-xwayland` | Hybrid — Wayland + X11 apps via XWayland |
 | `neopios-x11-image` | `x11 x11-base` (+ `splash`) | `x11` | X11-only | `packagegroup-core-x11-base` | Legacy X11 desktop, no Wayland/Weston |
 
 Common payload (`neopios-common.inc` for all three):
@@ -126,7 +126,7 @@ Common payload (`neopios-common.inc` for all three):
 Variant notes:
 
 - `neopios-weston-image.bb`: `IMAGE_FEATURES:append = " weston"`, `IMAGE_INSTALL:append = " weston"`, `REQUIRED_DISTRO_FEATURES = "wayland"` — strict Wayland, no `x11` feature, no `weston-xwayland`.
-- `neopios-xwayland-image.bb`: `IMAGE_FEATURES:append = " x11 weston"`, `IMAGE_INSTALL:append = " weston-xwayland"`, `REQUIRED_DISTRO_FEATURES = "wayland x11"` — hybrid; canonical image (git mv history preserved).
+ - `neopios-xwayland-image.bb`: `IMAGE_FEATURES:append = " x11 weston"`, `IMAGE_INSTALL:append = " weston-xwayland"`, `REQUIRED_DISTRO_FEATURES = "wayland x11"` — hybrid.
 - `neopios-x11-image.bb`: `IMAGE_FEATURES += "splash x11 x11-base"`, `IMAGE_INSTALL:append = " packagegroup-core-x11-base"`, `REQUIRED_DISTRO_FEATURES = "x11"` — X11-only, no Weston.
 
 ## Booting the image

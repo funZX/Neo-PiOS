@@ -4,7 +4,7 @@
 
 Neo-PiOS: a custom embedded Linux distro built with Yocto/OpenEmbedded (**wrynose 6.0**) targeting `raspberrypi4-64`, using **OpenRC** init (not systemd). All upstream metadata lives in git submodules under `layers/`. First-party code is only:
 
-- `layers/meta-neopios/` — distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb` Wayland-only, `neopios-xwayland-image.bb` hybrid XWayland [canonical, git mv successor to `core-image-neopios.bb`], `neopios-x11-image.bb` X11-only) + shared payload (`recipes-core/images/include/neopios-common.inc`)
+- `layers/meta-neopios/` — distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb` Wayland-only, `neopios-xwayland-image.bb` hybrid XWayland, `neopios-x11-image.bb` X11-only) + shared payload (`recipes-core/images/include/neopios-common.inc`)
 - `environment`, `docker/`, `build/` — build orchestration
 
 Choose a display variant per build: `neopios-weston-image` (Wayland-only, `REQUIRED_DISTRO_FEATURES = "wayland"`), `neopios-xwayland-image` (hybrid, `wayland x11` + `weston-xwayland`), or `neopios-x11-image` (X11-only, `x11` + `packagegroup-core-x11-base`). `DISTRO_FEATURES` stays `opengl wayland x11` globally; enforcement is per-image via `REQUIRED_DISTRO_FEATURES` + `features_check`.
@@ -19,13 +19,13 @@ bb.shell             # interactive shell in the container (repo mounted at ~/wor
 # inside the container:
 source layers/openembedded-core/oe-init-build-env build
 bitbake neopios-weston-image      # Wayland-only
-bitbake neopios-xwayland-image    # hybrid XWayland (canonical)
+bitbake neopios-xwayland-image    # hybrid XWayland
 bitbake neopios-x11-image         # X11-only
 ```
 
 Host-side helper from `environment`: `bb.shell` (interactive shell in the container).
 
-Pick the image that matches the desired display stack; `neopios-xwayland-image` is the replacement for the removed `core-image-neopios`.
+Pick the image that matches the desired display stack.
 
 ## Critical gotchas
 
@@ -44,7 +44,7 @@ Source `build/env-neopios.sh` inside the OE environment:
 
 ## Key configuration
 
-- `MACHINE = "raspberrypi4-64"`, `DISTRO = "neopios"`, primary targets: `neopios-weston-image` (Wayland-only, `weston` + `REQUIRED_DISTRO_FEATURES wayland`), `neopios-xwayland-image` (hybrid, `x11 weston` + `weston-xwayland`, `REQUIRED wayland x11` — canonical successor to `core-image-neopios`), `neopios-x11-image` (X11-only, `x11 x11-base` + `packagegroup-core-x11-base`, `REQUIRED x11`); legacy `core-image-neopios` has been removed
+- `MACHINE = "raspberrypi4-64"`, `DISTRO = "neopios"`, primary targets: `neopios-weston-image` (Wayland-only, `weston` + `REQUIRED_DISTRO_FEATURES wayland`), `neopios-xwayland-image` (hybrid, `x11 weston` + `weston-xwayland`, `REQUIRED wayland x11`), `neopios-x11-image` (X11-only, `x11 x11-base` + `packagegroup-core-x11-base`, `REQUIRED x11`)
 - Kernel provider: `linux-raspberrypi`; init: `INIT_MANAGER = "openrc"` via meta-openrc
 - `build/conf/local.conf` and `bblayers.conf` are tracked and pre-configured — don't regenerate them
 - wrynose uses `DISTRO_FEATURES_OPTED_OUT` / `DISTRO_FEATURES_DEFAULTS` (the old `*_BACKFILL_CONSIDERED` vars are obsolete); neopios opts out of `ptest vulkan multiarch`
