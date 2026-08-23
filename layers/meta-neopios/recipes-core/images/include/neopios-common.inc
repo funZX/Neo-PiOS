@@ -1,7 +1,7 @@
 # neopios-common.inc - Shared minimal payload for Neo-PiOS display images
 #
-# Minimal production payload shared across neopios-weston-image,
-# neopios-xwayland-image and neopios-x11-image.
+# Minimal production payload shared across all Neo-PiOS distribution
+# images (weston, xwayland, x11 variants).
 # Keeps distro global DISTRO_FEATURES (opengl wayland x11) unchanged;
 # per-image enforcement is via REQUIRED_DISTRO_FEATURES in each .bb.
 #
