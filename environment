@@ -7,57 +7,27 @@ function die  () { echo -e "\033[0;31m$*\033[0m"; exit 1; }
 #####################################################################################
 
 export PODMAN_IMAGE='linux-build-wrynose'
-export PODMAN_USER=$(whoami)
+export PODMAN_USER=ubuntu
 export PODMAN_UUID=$(id -u)
 export PODMAN_UGID=$(id -g)
 export PODMAN_WORKDIR=$(pwd)
-export PODMAN_PARAMS="--user ${PODMAN_USER} -v ${PODMAN_WORKDIR}:/home/${PODMAN_USER}/workspace:Z ${PODMAN_IMAGE}"
+export PODMAN_MOUNT="/home/${PODMAN_USER}/workspace"
+export PODMAN_PARAMS="--user ${PODMAN_USER} -v ${PODMAN_WORKDIR}:${PODMAN_MOUNT} ${PODMAN_IMAGE} $@"
 
 export PATH="${PODMAN_WORKDIR}/:${PATH}"
 #####################################################################################
 
 # find podman image and create if missing
-find_image=$(podman images -q ${PODMAN_IMAGE})
-if [ "${find_image}" = "" ]; then
-	podman build --build-arg "DOCKER_UUID=${PODMAN_UUID}" --build-arg "DOCKER_UGID=${PODMAN_UGID}" --build-arg "DOCKER_USER=${PODMAN_USER}" -t ${PODMAN_IMAGE} docker
-fi
-
-#####################################################################################
-
-# run podman with bb command
-function bb.run() {
-	podman run ${PODMAN_PARAMS} /home/exec.sh $@
-}
-
-export -f bb.run
-
-#####################################################################################
-
-# run podman with interactive shell and mounted local folder
-function bb.exec() {
-	podman run ${PODMAN_PARAMS} $@
-}
-
-export -f bb.exec
+podman build --build-arg "DOCKER_UID=${PODMAN_UUID}" --build-arg "DOCKER_GID=${PODMAN_UGID}" --build-arg "DOCKER_USER=${PODMAN_USER}" -t ${PODMAN_IMAGE} -f docker/Dockerfile docker
 
 #####################################################################################
 
 # run podman with interactive shell and mounted local folder
 function bb.shell() {
-	podman run -it ${PODMAN_PARAMS} /bin/bash
+	podman run -it ${PODMAN_PARAMS}
 }
 
 export -f bb.shell
-
-#####################################################################################
-
-# remove all stopped containers
-function bb.purge() {
-	find_stop=$(podman ps -aq)
-	[ ! "${find_stop}" = "" ] && podman rm $(podman ps -aq)
-}
-
-export -f bb.purge
 
 #####################################################################################
 
