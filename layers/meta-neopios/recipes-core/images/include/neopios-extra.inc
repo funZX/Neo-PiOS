@@ -15,7 +15,10 @@ IMAGE_INSTALL:append = " \
         i2c-tools libgpiod libgpiod-tools \
         git vim nano htop usbutils \
         geany man man-pages bash-completion \
-        epiphany freerdp \
+        freerdp \
         pulseaudio alsa-utils \
+        wpa-supplicant iw rfkill linux-firmware-bcm43455 \
+        kernel-module-brcmfmac kernel-module-brcmutil kernel-module-cfg80211 \
+        kernel-module-mac80211 \
     ', '', d)} \
 "

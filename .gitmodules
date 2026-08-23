@@ -14,3 +14,7 @@
 [submodule "layers/meta-raspberrypi"]
 	path = layers/meta-raspberrypi
 	url = https://git.yoctoproject.org/meta-raspberrypi
+[submodule "layers/meta-wayland"]
+	path = layers/meta-wayland
+	url = https://codeberg.org/flk/meta-wayland.git
+	branch = wrynose

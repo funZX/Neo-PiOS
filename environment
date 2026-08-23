@@ -37,6 +37,7 @@ ef022bf82d79015802309d14c28b13373ebe53f5,layers/openembedded-core
 6bf0d8ad57b33950bab4c7f6c037e1ccb6f6e2eb,layers/meta-openembedded
 b95dfea5820825d5b54e23fe7ba61f736c0eb440,layers/meta-openrc
 f62c67921474370829d24a4fa01ef88543f3906b,layers/meta-raspberrypi
+3634f036df19b952fc78efb15381bf9e79c293b2,layers/meta-wayland
 EOF
 )"
 
