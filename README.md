@@ -23,7 +23,7 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 | `layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` | Hybrid XWayland image (IMAGE_FEATURES `x11 weston`, `weston-xwayland`, REQUIRED_DISTRO_FEATURES `wayland x11`) |
 | `layers/meta-neopios/recipes-core/images/neopios-x11-image.bb` | X11-only image (IMAGE_FEATURES `x11 x11-base`, `packagegroup-core-x11-base` + `tigervnc`/`x11vnc`, REQUIRED_DISTRO_FEATURES `x11`) |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Minimal `EXTRA_IMAGE_FEATURES` (`package-management`) + `IMAGE_INSTALL` for all three images |
-| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `freerdp` + `epiphany`/`remmina`/`gtk-vnc` (x11 only), `pulseaudio` |
+| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `epiphany`/`freerdp`, `pulseaudio` (VNC server via weston VNC backend + `tigervnc`/`x11vnc` in x11 image) |
 | `layers/meta-neopios/recipes-graphics/wayland/weston_%.bbappend` | Enables Weston's VNC backend (`PACKAGECONFIG:append = " vnc"` via `neatvnc`/`libpam`, `weston --backend=vnc` / `weston.ini [core] backend=vnc-backend.so`) for weston/xwayland images |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common-dev.inc` | Dev add-on extending minimal with `tools-debug`/`tools-profile`, `post-install-logging`, empty-password and extra tools (`gdb`, `net-tools`, `iptraf`) |
 | `layers/bitbake` | BitBake build tool |
@@ -123,7 +123,7 @@ Three variants share `include/neopios-common.inc` (minimal) + `include/neopios-e
 Common payload:
 
 - Minimal (`neopios-common.inc` for all three): `EXTRA_IMAGE_FEATURES = "package-management"` (`opkg`); `IMAGE_INSTALL` = `bash`, `coreutils`, `iproute2`, `iputils`, `dhcpcd`, `kmod`, `procps`, `psmisc`, `util-linux`, `openssh`, `sudo`, `tzdata-core`
-- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `freerdp` + `epiphany`/`remmina`/`gtk-vnc` (x11 only), `pulseaudio`/`alsa-utils` (plus `tigervnc`/`x11vnc` directly in `neopios-x11-image`)
+- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `epiphany`/`freerdp`, `pulseaudio`/`alsa-utils` (VNC server via weston VNC backend for weston/xwayland + `tigervnc`/`x11vnc` directly in `neopios-x11-image`)
 - Dev add-on (`neopios-common-dev.inc` extends minimal): adds `tools-debug`, `tools-profile`, `post-install-logging`, `allow-empty-password`/`allow-root-login`/`empty-root-password` and `gdb`, `iproute2-tc`/`ss`, `net-tools`, `iptraf`
 
 Variant notes:

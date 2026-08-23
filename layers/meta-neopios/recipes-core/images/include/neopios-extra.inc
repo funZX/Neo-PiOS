@@ -15,8 +15,7 @@ IMAGE_INSTALL:append = " \
         i2c-tools libgpiod libgpiod-tools \
         git vim nano htop usbutils \
         geany man man-pages bash-completion \
-        freerdp \
-        ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'epiphany remmina gtk-vnc', '', d)} \
+        epiphany freerdp \
         pulseaudio alsa-utils \
     ', '', d)} \
 "
