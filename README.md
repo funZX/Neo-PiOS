@@ -6,11 +6,11 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 
 - Machine `raspberrypi4-64`, distro `neopios`, kernel `linux-raspberrypi`
 - OpenRC init (`INIT_MANAGER = "openrc"` via `meta-openrc`)
-- Three display variants sharing a common payload (`include/neopios-common.inc`):
+- Three display variants sharing a common payload (minimal `include/neopios-common.inc` + hobby/edu/thin `include/neopios-extra.inc` with `NEOPIOS_EXTRA=1` by default):
   - `neopios-weston-image` — Wayland-only (strict, no X11) — Weston compositor only
   - `neopios-xwayland-image` — hybrid XWayland (Wayland/Weston + X11 via `weston-xwayland`)
   - `neopios-x11-image` — X11-only (no Wayland/Weston) — `x11`/`x11-base` + `packagegroup-core-x11-base`
-- openssh and essential networking/tooling out of the box (minimal via `neopios-common.inc` + `package-management`/`opkg`, dev adds debug via `neopios-common-dev.inc`)
+- openssh and essential networking/tooling out of the box (minimal via `neopios-common.inc` + `package-management`/`opkg`, hobby/edu/thin via `neopios-extra.inc`, dev adds debug via `neopios-common-dev.inc`)
 - Reproducible builds: upstream layers pinned via git submodules + patches
 - Fully containerized builds via rootless podman — no host pollution
 
@@ -18,11 +18,12 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 
 | Path | Purpose |
 |------|---------|
-| `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, dev `recipes-core/images/include/neopios-common-dev.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) |
+| `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, hobby/edu/thin `recipes-core/images/include/neopios-extra.inc` (`NEOPIOS_EXTRA=1`), dev `recipes-core/images/include/neopios-common-dev.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) |
 | `layers/meta-neopios/recipes-core/images/neopios-weston-image.bb` | Wayland-only image (IMAGE_FEATURES `weston`, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` | Hybrid XWayland image (IMAGE_FEATURES `x11 weston`, `weston-xwayland`, REQUIRED_DISTRO_FEATURES `wayland x11`) |
 | `layers/meta-neopios/recipes-core/images/neopios-x11-image.bb` | X11-only image (IMAGE_FEATURES `x11 x11-base`, `packagegroup-core-x11-base`, REQUIRED_DISTRO_FEATURES `x11`) |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Minimal `EXTRA_IMAGE_FEATURES` (`package-management`) + `IMAGE_INSTALL` for all three images |
+| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `chromium-ozone-wayland`/`freerdp`/`wayvnc`, `pulseaudio` |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common-dev.inc` | Dev add-on extending minimal with `tools-debug`/`tools-profile`, `post-install-logging`, empty-password and extra tools (`gdb`, `net-tools`, `iptraf`) |
 | `layers/bitbake` | BitBake build tool |
 | `layers/openembedded-core` | OE-Core: base metadata, classes, and the `oe-init-build-env` entrypoint |
@@ -65,6 +66,7 @@ Notes:
 - `PODMAN_WORKDIR` is captured when `environment` is sourced, so always source it from the repo root.
 - Images land in `build/tmp/deploy/images/raspberrypi4-64/`.
 - `DISTRO_FEATURES` stays `opengl wayland x11` globally (wrynose 6.0, `INIT_MANAGER = "openrc"`, `MACHINE = "raspberrypi4-64"`); per-image enforcement is via `REQUIRED_DISTRO_FEATURES` + `features_check` (see table below).
+- `NEOPIOS_EXTRA` (`neopios-extra.inc`) defaults to `1` (hobby/edu/thin extra on); set `NEOPIOS_EXTRA = "0"` in `build/conf/local.conf` or `NEOPIOS_EXTRA=0 bitbake <image>` for minimal.
 
 
 ### Host-side helper (after `source environment`)
@@ -109,7 +111,7 @@ Key settings and where they live:
 
 ### Display images — comparison
 
-Three variants share `include/neopios-common.inc` (`EXTRA_IMAGE_FEATURES` + common `IMAGE_INSTALL`) and `include/core-image-neopios.inc` (boot + `LICENSE`). Each inherits `core-image` + `features_check` and enforces its required distro features; global `DISTRO_FEATURES` stays `opengl wayland x11`.
+Three variants share `include/neopios-common.inc` (minimal) + `include/neopios-extra.inc` (`NEOPIOS_EXTRA=1` hobby/edu/thin extra) and `include/core-image-neopios.inc` (boot + `LICENSE`). Each inherits `core-image` + `features_check` and enforces its required distro features; global `DISTRO_FEATURES` stays `opengl wayland x11`.
 
 | Image | `IMAGE_FEATURES` | `REQUIRED_DISTRO_FEATURES` | Display stack | Packages (on top of common) | Use case |
 |-------|------------------|-----------------------------|---------------|------------------------------|----------|
@@ -120,6 +122,7 @@ Three variants share `include/neopios-common.inc` (`EXTRA_IMAGE_FEATURES` + comm
 Common payload:
 
 - Minimal (`neopios-common.inc` for all three): `EXTRA_IMAGE_FEATURES = "package-management"` (`opkg`); `IMAGE_INSTALL` = `bash`, `coreutils`, `iproute2`, `iputils`, `dhcpcd`, `kmod`, `procps`, `psmisc`, `util-linux`, `openssh`, `sudo`, `tzdata-core`
+- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `chromium-ozone-wayland`/`freerdp`/`wayvnc`/`tigervnc`, `pulseaudio`/`alsa-utils`
 - Dev add-on (`neopios-common-dev.inc` extends minimal): adds `tools-debug`, `tools-profile`, `post-install-logging`, `allow-empty-password`/`allow-root-login`/`empty-root-password` and `gdb`, `iproute2-tc`/`ss`, `net-tools`, `iptraf`
 
 Variant notes:

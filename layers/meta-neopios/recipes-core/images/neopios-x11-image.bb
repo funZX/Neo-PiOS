@@ -2,13 +2,15 @@
 #
 # Strict X11 image without Wayland/Weston.
 # Requires DISTRO_FEATURE x11; does not enable Wayland.
-# Shared payload (EXTRA_IMAGE_FEATURES, common IMAGE_INSTALL) lives in
-# include/neopios-common.inc; base boot + LICENSE via include/core-image-neopios.inc.
+# Shared payload: minimal in include/neopios-common.inc, hobby/edu/thin
+# extra in include/neopios-extra.inc (NEOPIOS_EXTRA=1 by default);
+# base boot + LICENSE via include/core-image-neopios.inc.
 # Global DISTRO_FEATURES unchanged - enforcement is per-image
 # via REQUIRED_DISTRO_FEATURES + features_check.
 
 require include/core-image-neopios.inc
 require include/neopios-common.inc
+require include/neopios-extra.inc
 
 SUMMARY = "Neo-PiOS X11-only image (X11 without compositors)"
 LICENSE = "MIT"
