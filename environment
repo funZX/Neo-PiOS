@@ -24,7 +24,7 @@ podman build --build-arg "DOCKER_UID=${PODMAN_UUID}" --build-arg "DOCKER_GID=${P
 
 # run podman with interactive shell and mounted local folder
 function bb.shell() {
-	podman run -it ${PODMAN_PARAMS} /bin/bash
+	podman run -it ${PODMAN_PARAMS} /bin/bash -l
 }
 
 export -f bb.shell
