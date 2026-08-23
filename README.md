@@ -26,7 +26,7 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 | `layers/bitbake` | BitBake build tool |
 | `layers/openembedded-core` | OE-Core: base metadata, classes, and the `oe-init-build-env` entrypoint |
 | `layers/meta-openembedded` | Extra recipes (meta-oe, meta-perl, meta-python, meta-networking, meta-filesystems sublayers) |
-| `layers/meta-openrc` | OpenRC init support (patched for wrynose via `layers/meta-openrc.patch`) |
+| `layers/meta-openrc` | OpenRC init support (tracking `master`, wrynose-compatible upstream) |
 | `layers/meta-raspberrypi` | Raspberry Pi BSP (machine configs, boot firmware) |
 | `layers/<name>.patch` | Per-layer patches applied automatically after pinned checkout |
 | `environment` | Host helper: builds the container image, syncs submodules, defines `bb.*` functions |
