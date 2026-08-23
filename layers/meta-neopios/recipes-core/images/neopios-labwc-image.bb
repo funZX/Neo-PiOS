@@ -4,7 +4,7 @@
 # Shared payload: minimal in include/neopios-common.inc, hobby/edu/thin
 # extra in include/neopios-extra.inc (NEOPIOS_EXTRA=1 by default);
 # base boot + LICENSE via include/core-image-neopios.inc.
-# Global DISTRO_FEATURES stays "opengl wayland x11 pam" — enforcement
+# Global DISTRO_FEATURES stays "opengl wayland pam" — enforcement
 # is per-image via REQUIRED_DISTRO_FEATURES + features_check.
 
 require include/core-image-neopios.inc

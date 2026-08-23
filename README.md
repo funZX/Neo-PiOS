@@ -21,7 +21,7 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 | `layers/meta-neopios/recipes-core/images/neopios-weston-image.bb` | Wayland-only Weston image (IMAGE_FEATURES `weston`, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/neopios-labwc-image.bb` | Wayland-only Labwc image (wlroots-based, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Minimal `EXTRA_IMAGE_FEATURES` (`package-management`) + `IMAGE_INSTALL` for both images |
-| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `epiphany`/`freerdp`, `pulseaudio` (VNC server via weston VNC backend) |
+| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `freerdp`, `pulseaudio` (VNC server via weston VNC backend) |
 | `layers/meta-neopios/recipes-graphics/wayland/weston_%.bbappend` | Enables Weston's VNC backend (`PACKAGECONFIG:append = " vnc"` via `neatvnc`/`libpam`, `weston --backend=vnc` / `weston.ini [core] backend=vnc-backend.so`) for weston |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common-dev.inc` | Dev add-on extending minimal with `tools-debug`/`tools-profile`, `post-install-logging`, empty-password and extra tools (`gdb`, `net-tools`, `iptraf`) |
 | `layers/bitbake` | BitBake build tool |
@@ -64,7 +64,7 @@ Notes:
 - The first build downloads all sources and compiles everything from scratch — expect hours. Subsequent builds reuse `sstate-cache/` and `downloads/`, so they are much faster.
 - `PODMAN_WORKDIR` is captured when `environment` is sourced, so always source it from the repo root.
 - Images land in `build/tmp/deploy/images/raspberrypi4-64/`.
-- `DISTRO_FEATURES` stays `opengl wayland x11 pam` globally (wrynose 6.0, `INIT_MANAGER = "openrc"`, `MACHINE = "raspberrypi4-64"`); per-image enforcement is via `REQUIRED_DISTRO_FEATURES` + `features_check` (see table below).
+- `DISTRO_FEATURES` stays `opengl wayland pam` globally (wrynose 6.0, `INIT_MANAGER = "openrc"`, `MACHINE = "raspberrypi4-64"`); per-image enforcement is via `REQUIRED_DISTRO_FEATURES` + `features_check` (see table below).
 - `NEOPIOS_EXTRA` (`neopios-extra.inc`) defaults to `1` (hobby/edu/thin extra on); set `NEOPIOS_EXTRA = "0"` in `build/conf/local.conf` or `NEOPIOS_EXTRA=0 bitbake <image>` for minimal.
 
 
@@ -105,12 +105,12 @@ Key settings and where they live:
 | `INIT_MANAGER` | `openrc` | `meta-neopios/conf/distro/neopios.conf` |
 | Kernel provider | `linux-raspberrypi` | `meta-neopios/conf/distro/include/neopios.inc` |
 | `PACKAGE_CLASSES` | `package_ipk` | `build/conf/local.conf` |
-| `DISTRO_FEATURES` | + `opengl wayland x11 pam` | `neopios.conf` (global) |
+| `DISTRO_FEATURES` | + `opengl wayland pam` | `neopios.conf` (global) |
 | Opted-out features | `ptest vulkan multiarch` | `neopios.conf` (wrynose mechanism) |
 
 ### Display images — comparison
 
-Two Wayland variants share `include/neopios-common.inc` (minimal) + `include/neopios-extra.inc` (`NEOPIOS_EXTRA=1` hobby/edu/thin extra) and `include/core-image-neopios.inc` (boot + `LICENSE`). Each inherits `core-image` + `features_check` and enforces `REQUIRED_DISTRO_FEATURES = "wayland"`; global `DISTRO_FEATURES` stays `opengl wayland x11 pam`.
+Two Wayland variants share `include/neopios-common.inc` (minimal) + `include/neopios-extra.inc` (`NEOPIOS_EXTRA=1` hobby/edu/thin extra) and `include/core-image-neopios.inc` (boot + `LICENSE`). Each inherits `core-image` + `features_check` and enforces `REQUIRED_DISTRO_FEATURES = "wayland"`; global `DISTRO_FEATURES` stays `opengl wayland pam`.
 
 | Image | `IMAGE_FEATURES` | `REQUIRED_DISTRO_FEATURES` | Display stack | Packages (on top of common) | Use case |
 |-------|------------------|-----------------------------|---------------|------------------------------|----------|
@@ -120,7 +120,7 @@ Two Wayland variants share `include/neopios-common.inc` (minimal) + `include/neo
 Common payload:
 
 - Minimal (`neopios-common.inc` for both): `EXTRA_IMAGE_FEATURES = "package-management"` (`opkg`); `IMAGE_INSTALL` = `bash`, `coreutils`, `iproute2`, `iputils`, `dhcpcd`, `kmod`, `procps`, `psmisc`, `util-linux`, `openssh`, `sudo`, `tzdata-core`
-- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `epiphany`/`freerdp`, `pulseaudio`/`alsa-utils` (VNC server via weston VNC backend for weston)
+- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `freerdp`, `pulseaudio`/`alsa-utils` (VNC server via weston VNC backend for weston)
 - Dev add-on (`neopios-common-dev.inc` extends minimal): adds `tools-debug`, `tools-profile`, `post-install-logging`, `allow-empty-password`/`allow-root-login`/`empty-root-password` and `gdb`, `iproute2-tc`/`ss`, `net-tools`, `iptraf`
 
 Variant notes:

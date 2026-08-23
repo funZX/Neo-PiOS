@@ -15,7 +15,7 @@ IMAGE_INSTALL:append = " \
         i2c-tools libgpiod libgpiod-tools \
         git vim nano htop usbutils \
         geany man man-pages bash-completion \
-        epiphany freerdp \
+        freerdp \
         pulseaudio alsa-utils \
     ', '', d)} \
 "

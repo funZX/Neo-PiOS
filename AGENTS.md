@@ -7,7 +7,7 @@ Neo-PiOS: a custom embedded Linux distro built with Yocto/OpenEmbedded (**wrynos
 - `layers/meta-neopios/` — distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb` Wayland-only Weston, `neopios-labwc-image.bb` Wayland-only Labwc) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, hobby/edu/thin `recipes-core/images/include/neopios-extra.inc` with `NEOPIOS_EXTRA=1` default, dev `recipes-core/images/include/neopios-common-dev.inc`)
 - `environment`, `docker/`, `build/` — build orchestration
 
-Choose a display variant per build: `neopios-weston-image` (Wayland-only Weston, `REQUIRED_DISTRO_FEATURES = "wayland"`), or `neopios-labwc-image` (Wayland-only Labwc wlroots, `REQUIRED_DISTRO_FEATURES = "wayland"`). `DISTRO_FEATURES` stays `opengl wayland x11 pam` globally; enforcement is per-image via `REQUIRED_DISTRO_FEATURES` + `features_check`. Minimal via `neopios-common.inc`; `NEOPIOS_EXTRA=1` (default) adds hobby/edu/thin (`neopios-extra.inc`), `0` for minimal factory image.
+Choose a display variant per build: `neopios-weston-image` (Wayland-only Weston, `REQUIRED_DISTRO_FEATURES = "wayland"`), or `neopios-labwc-image` (Wayland-only Labwc wlroots, `REQUIRED_DISTRO_FEATURES = "wayland"`). `DISTRO_FEATURES` stays `opengl wayland pam` globally; enforcement is per-image via `REQUIRED_DISTRO_FEATURES` + `features_check`. Minimal via `neopios-common.inc`; `NEOPIOS_EXTRA=1` (default) adds hobby/edu/thin (`neopios-extra.inc`), `0` for minimal factory image.
 
 ## Build workflow (podman container, never the host)
 
@@ -46,7 +46,7 @@ Available at login via `~/.bash_profile` (PS1 + aliases inside `if [ -f ...oe-in
 - Kernel provider: `linux-raspberrypi`; init: `INIT_MANAGER = "openrc"` via meta-openrc
 - `build/conf/local.conf` and `bblayers.conf` are tracked and pre-configured — don't regenerate them
 - wrynose uses `DISTRO_FEATURES_OPTED_OUT` / `DISTRO_FEATURES_DEFAULTS` (the old `*_BACKFILL_CONSIDERED` vars are obsolete); neopios opts out of `ptest vulkan multiarch`
-- Global `DISTRO_FEATURES` appends `opengl wayland x11 pam`; per-image `REQUIRED_DISTRO_FEATURES` + `features_check` selects the display stack without forking the distro
+- Global `DISTRO_FEATURES` appends `opengl wayland pam`; per-image `REQUIRED_DISTRO_FEATURES` + `features_check` selects the display stack without forking the distro
 
 ## Verification
 
