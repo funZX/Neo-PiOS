@@ -10,7 +10,7 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
   - `neopios-weston-image` — Wayland-only (strict, no X11) — Weston compositor only
   - `neopios-xwayland-image` — hybrid XWayland (Wayland/Weston + X11 via `weston-xwayland`)
   - `neopios-x11-image` — X11-only (no Wayland/Weston) — `x11`/`x11-base` + `packagegroup-core-x11-base`
-- openssh, python3, and common networking/debug tooling out of the box (shared via `neopios-common.inc`)
+- openssh and essential networking/tooling out of the box (minimal via `neopios-common.inc` + `package-management`/`opkg`, dev adds debug via `neopios-common-dev.inc`)
 - Reproducible builds: upstream layers pinned via git submodules + patches
 - Fully containerized builds via rootless podman — no host pollution
 
@@ -18,11 +18,12 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 
 | Path | Purpose |
 |------|---------|
-| `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (`recipes-core/images/include/neopios-common.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) |
+| `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, dev `recipes-core/images/include/neopios-common-dev.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) |
 | `layers/meta-neopios/recipes-core/images/neopios-weston-image.bb` | Wayland-only image (IMAGE_FEATURES `weston`, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` | Hybrid XWayland image (IMAGE_FEATURES `x11 weston`, `weston-xwayland`, REQUIRED_DISTRO_FEATURES `wayland x11`) |
 | `layers/meta-neopios/recipes-core/images/neopios-x11-image.bb` | X11-only image (IMAGE_FEATURES `x11 x11-base`, `packagegroup-core-x11-base`, REQUIRED_DISTRO_FEATURES `x11`) |
-| `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Shared `EXTRA_IMAGE_FEATURES` + `IMAGE_INSTALL` payload for all three display images |
+| `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Minimal `EXTRA_IMAGE_FEATURES` (`package-management`) + `IMAGE_INSTALL` for all three images |
+| `layers/meta-neopios/recipes-core/images/include/neopios-common-dev.inc` | Dev add-on extending minimal with `tools-debug`/`tools-profile`, `post-install-logging`, empty-password and extra tools (`gdb`, `net-tools`, `iptraf`) |
 | `layers/bitbake` | BitBake build tool |
 | `layers/openembedded-core` | OE-Core: base metadata, classes, and the `oe-init-build-env` entrypoint |
 | `layers/meta-openembedded` | Extra recipes (meta-oe, meta-perl, meta-python, meta-networking, meta-filesystems sublayers) |
@@ -116,11 +117,10 @@ Three variants share `include/neopios-common.inc` (`EXTRA_IMAGE_FEATURES` + comm
 | `neopios-xwayland-image` | `x11 weston` | `wayland x11` | Hybrid XWayland | `weston-xwayland` | Hybrid — Wayland + X11 apps via XWayland |
 | `neopios-x11-image` | `x11 x11-base` (+ `splash`) | `x11` | X11-only | `packagegroup-core-x11-base` | Legacy X11 desktop, no Wayland/Weston |
 
-Common payload (`neopios-common.inc` for all three):
+Common payload:
 
-- Networking: `iproute2`, `dhcpcd`, `ifplugd`, `resolvconf`, `net-tools`, `iputils`
-- System/tools: `openssh`, `sudo`, `python3`, `gdb`, `kmod`, `util-linux`, `procps`, `psmisc`, `icu`, `tzdata`, `bash`, `coreutils`
-- Debug conveniences: `allow-empty-password allow-root-login empty-root-password`, `tools-debug`, `tools-profile`, `post-install-logging`, `package-management`
+- Minimal (`neopios-common.inc` for all three): `EXTRA_IMAGE_FEATURES = "package-management"` (`opkg`); `IMAGE_INSTALL` = `bash`, `coreutils`, `iproute2`, `iputils`, `dhcpcd`, `kmod`, `procps`, `psmisc`, `util-linux`, `openssh`, `sudo`, `tzdata-core`
+- Dev add-on (`neopios-common-dev.inc` extends minimal): adds `tools-debug`, `tools-profile`, `post-install-logging`, `allow-empty-password`/`allow-root-login`/`empty-root-password` and `gdb`, `iproute2-tc`/`ss`, `net-tools`, `iptraf`
 
 Variant notes:
 
