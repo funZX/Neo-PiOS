@@ -12,7 +12,7 @@ export PODMAN_UUID=$(id -u)
 export PODMAN_UGID=$(id -g)
 export PODMAN_WORKDIR=$(pwd)
 export PODMAN_MOUNT="/home/${PODMAN_USER}/workspace"
-export PODMAN_PARAMS="--user ${PODMAN_USER} -v ${PODMAN_WORKDIR}:${PODMAN_MOUNT} ${PODMAN_IMAGE} $@"
+export PODMAN_PARAMS="--rm --userns=keep-id --user ${PODMAN_USER} -v ${PODMAN_WORKDIR}:${PODMAN_MOUNT} ${PODMAN_IMAGE}"
 
 export PATH="${PODMAN_WORKDIR}/:${PATH}"
 #####################################################################################
@@ -24,7 +24,7 @@ podman build --build-arg "DOCKER_UID=${PODMAN_UUID}" --build-arg "DOCKER_GID=${P
 
 # run podman with interactive shell and mounted local folder
 function bb.shell() {
-	podman run -it ${PODMAN_PARAMS}
+	podman run -it ${PODMAN_PARAMS} /bin/bash
 }
 
 export -f bb.shell
