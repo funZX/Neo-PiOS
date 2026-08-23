@@ -4,10 +4,10 @@
 
 Neo-PiOS: a custom embedded Linux distro built with Yocto/OpenEmbedded (**wrynose 6.0**) targeting `raspberrypi4-64`, using **OpenRC** init (not systemd). All upstream metadata lives in git submodules under `layers/`. First-party code is only:
 
-- `layers/meta-neopios/` — distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb` Wayland-only, `neopios-xwayland-image.bb` hybrid XWayland, `neopios-x11-image.bb` X11-only) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, hobby/edu/thin `recipes-core/images/include/neopios-extra.inc` with `NEOPIOS_EXTRA=1` default, dev `recipes-core/images/include/neopios-common-dev.inc`)
+- `layers/meta-neopios/` — distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb` Wayland-only Weston, `neopios-labwc-image.bb` Wayland-only Labwc) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, hobby/edu/thin `recipes-core/images/include/neopios-extra.inc` with `NEOPIOS_EXTRA=1` default, dev `recipes-core/images/include/neopios-common-dev.inc`)
 - `environment`, `docker/`, `build/` — build orchestration
 
-Choose a display variant per build: `neopios-weston-image` (Wayland-only, `REQUIRED_DISTRO_FEATURES = "wayland"`), `neopios-xwayland-image` (hybrid, `wayland x11` + `weston-xwayland`), or `neopios-x11-image` (X11-only, `x11` + `packagegroup-core-x11-base`). `DISTRO_FEATURES` stays `opengl wayland x11 pam` globally; enforcement is per-image via `REQUIRED_DISTRO_FEATURES` + `features_check`. Minimal via `neopios-common.inc`; `NEOPIOS_EXTRA=1` (default) adds hobby/edu/thin (`neopios-extra.inc`), `0` for minimal factory image.
+Choose a display variant per build: `neopios-weston-image` (Wayland-only Weston, `REQUIRED_DISTRO_FEATURES = "wayland"`), or `neopios-labwc-image` (Wayland-only Labwc wlroots, `REQUIRED_DISTRO_FEATURES = "wayland"`). `DISTRO_FEATURES` stays `opengl wayland x11 pam` globally; enforcement is per-image via `REQUIRED_DISTRO_FEATURES` + `features_check`. Minimal via `neopios-common.inc`; `NEOPIOS_EXTRA=1` (default) adds hobby/edu/thin (`neopios-extra.inc`), `0` for minimal factory image.
 
 ## Build workflow (podman container, never the host)
 
@@ -17,9 +17,8 @@ Builds run in a rootless **podman** container (image `linux-build-wrynose`, auto
 source environment   # builds podman image if missing; inits + resets submodules
 bb.shell             # interactive shell in the container (repo mounted at ~/workspace)
 # inside the container (oe-init auto-sourced via ~/.bash_profile on bb.shell -l login):
-bitbake neopios-weston-image      # Wayland-only
-bitbake neopios-xwayland-image    # hybrid XWayland
-bitbake neopios-x11-image         # X11-only
+bitbake neopios-weston-image      # Wayland-only Weston
+bitbake neopios-labwc-image       # Wayland-only Labwc (wlroots)
 ```
 
 Host-side helper from `environment`: `bb.shell` (interactive shell in the container).
@@ -43,7 +42,7 @@ Available at login via `~/.bash_profile` (PS1 + aliases inside `if [ -f ...oe-in
 
 ## Key configuration
 
-- `MACHINE = "raspberrypi4-64"`, `DISTRO = "neopios"`, primary targets: `neopios-weston-image` (Wayland-only, `weston` + `REQUIRED_DISTRO_FEATURES wayland`), `neopios-xwayland-image` (hybrid, `x11 weston` + `weston-xwayland`, `REQUIRED wayland x11`), `neopios-x11-image` (X11-only, `x11 x11-base` + `packagegroup-core-x11-base`, `REQUIRED x11`)
+- `MACHINE = "raspberrypi4-64"`, `DISTRO = "neopios"`, primary targets: `neopios-weston-image` (Wayland-only Weston, `REQUIRED_DISTRO_FEATURES = "wayland"`), `neopios-labwc-image` (Wayland-only Labwc wlroots, `REQUIRED_DISTRO_FEATURES = "wayland"`)
 - Kernel provider: `linux-raspberrypi`; init: `INIT_MANAGER = "openrc"` via meta-openrc
 - `build/conf/local.conf` and `bblayers.conf` are tracked and pre-configured — don't regenerate them
 - wrynose uses `DISTRO_FEATURES_OPTED_OUT` / `DISTRO_FEATURES_DEFAULTS` (the old `*_BACKFILL_CONSIDERED` vars are obsolete); neopios opts out of `ptest vulkan multiarch`
@@ -55,12 +54,10 @@ No test suite, linter, or CI exists. Verification = a successful bitbake of the 
 
 ```sh
 bitbake -e neopios-weston-image   # should show wayland without x11
-bitbake -e neopios-xwayland-image # should show wayland and x11
-bitbake -e neopios-x11-image      # should show x11 without wayland
+bitbake -e neopios-labwc-image    # should show wayland without x11
 # optional full builds (resource-heavy):
 bitbake neopios-weston-image
-bitbake neopios-xwayland-image
-bitbake neopios-x11-image
+bitbake neopios-labwc-image
 ```
 
-Build artifacts (`build/tmp*`, `sstate-cache`, `downloads/`) are gitignored. Choose the image that matches the change under test; `neopios-xwayland-image` is the default for hybrid display testing.
+Build artifacts (`build/tmp*`, `sstate-cache`, `downloads/`) are gitignored. Choose the image that matches the change under test.
