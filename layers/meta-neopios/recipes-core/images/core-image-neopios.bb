@@ -8,8 +8,6 @@ IMAGE_FEATURES:append = " x11 weston"
 IMAGE_INSTALL:append = " \
 \   
     weston-xwayland \
-    buildah \
-    podman \
 \
     bash \
     coreutils \

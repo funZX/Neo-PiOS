@@ -13,9 +13,6 @@
 [submodule "layers/meta-security"]
 	path = layers/meta-security
 	url = https://git.yoctoproject.org/meta-security
-[submodule "layers/meta-virtualization"]
-	path = layers/meta-virtualization
-	url = https://git.yoctoproject.org/meta-virtualization
 [submodule "layers/meta-raspberrypi"]
 	path = layers/meta-raspberrypi
 	url = https://git.yoctoproject.org/meta-raspberrypi

@@ -38,7 +38,7 @@ Source `build/env-neopios.sh` inside the OE environment:
 
 ## Key configuration
 
-- `MACHINE = "raspberrypi4-64"`, `DISTRO = "neopios"`, primary target: `core-image-neopios` (weston/x11, podman+buildah *inside* the image, openssh, python3)
+- `MACHINE = "raspberrypi4-64"`, `DISTRO = "neopios"`, primary target: `core-image-neopios` (weston/x11, openssh, python3)
 - Kernel provider: `linux-raspberrypi`; init: `INIT_MANAGER = "openrc"` via meta-openrc
 - `build/conf/local.conf` and `bblayers.conf` are tracked and pre-configured — don't regenerate them
 - wrynose uses `DISTRO_FEATURES_OPTED_OUT` / `DISTRO_FEATURES_DEFAULTS` (the old `*_BACKFILL_CONSIDERED` vars are obsolete); neopios opts out of `ptest vulkan multiarch`

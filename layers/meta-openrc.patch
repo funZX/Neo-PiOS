@@ -20,10 +20,3 @@ index 00fbbf7..6f17df9 100644
  
 -LAYERSERIES_COMPAT_openrc-layer = "whinlatter"
 +LAYERSERIES_COMPAT_openrc-layer = "whinlatter wrynose"
-diff --git a/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend b/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend
-deleted file mode 100644
-index 8b6b7bc..0000000
---- a/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend
-+++ /dev/null
-@@ -1 +0,0 @@
--require docker-openrc.inc

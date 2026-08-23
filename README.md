@@ -7,7 +7,6 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 - Machine `raspberrypi4-64`, distro `neopios`, kernel `linux-raspberrypi`
 - OpenRC init (`INIT_MANAGER = "openrc"` via `meta-openrc`)
 - Weston / X11 graphical session (`weston-xwayland`)
-- Containers *inside* the image: podman + buildah
 - openssh, python3, and common networking/debug tooling out of the box
 - Reproducible builds: upstream layers pinned via git submodules + patches
 - Fully containerized builds via rootless podman — no host pollution
@@ -22,7 +21,6 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 | `layers/meta-openembedded` | Extra recipes (meta-oe, meta-perl, meta-python, meta-networking, meta-filesystems sublayers) |
 | `layers/meta-openrc` | OpenRC init support (patched for wrynose via `layers/meta-openrc.patch`) |
 | `layers/meta-security` | Security tooling and hardening recipes |
-| `layers/meta-virtualization` | Container/virtualization support (podman, buildah) |
 | `layers/meta-raspberrypi` | Raspberry Pi BSP (machine configs, boot firmware) |
 | `layers/<name>.patch` | Per-layer patches applied automatically after pinned checkout |
 | `environment` | Host helper: builds the container image, syncs submodules, defines `bb.*` functions |
@@ -99,13 +97,12 @@ Key settings and where they live:
 | `INIT_MANAGER` | `openrc` | `meta-neopios/conf/distro/neopios.conf` |
 | Kernel provider | `linux-raspberrypi` | `meta-neopios/conf/distro/include/neopios.inc` |
 | `PACKAGE_CLASSES` | `package_ipk` | `build/conf/local.conf` |
-| `DISTRO_FEATURES` | + `opengl wayland x11 virtualization security` | `neopios.conf` |
+| `DISTRO_FEATURES` | + `opengl wayland x11 security` | `neopios.conf` |
 | Opted-out features | `ptest vulkan multiarch` | `neopios.conf` (wrynose mechanism) |
 
 Image content (`core-image-neopios`):
 
 - Graphical: `x11` + `weston` image features, `weston-xwayland`
-- Containers: `podman`, `buildah`
 - Networking: `iproute2`, `dhcpcd`, `ifplugd`, `resolvconf`, `net-tools`, `iputils`
 - System/tools: `openssh`, `sudo`, `python3`, `gdb`, `kmod`, `util-linux`, `procps`, `psmisc`, `icu`, `tzdata`
 - Debug conveniences enabled: root login with empty password (`allow-empty-password allow-root-login empty-root-password`), `tools-debug`, `tools-profile`
