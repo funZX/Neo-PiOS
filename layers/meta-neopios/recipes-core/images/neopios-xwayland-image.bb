@@ -4,7 +4,7 @@
 # common Neo-PiOS payload (minimal in neopios-common.inc, hobby/edu/thin
 # extra in neopios-extra.inc with NEOPIOS_EXTRA=1).
 #
-# DISTRO_FEATURES stays "opengl wayland x11" globally; per-image
+# DISTRO_FEATURES stays "opengl wayland x11 pam" globally; per-image
 # enforcement is via REQUIRED_DISTRO_FEATURES + features_check.
 # Follow wrynose 6.0 conventions, MACHINE=raspberrypi4-64, INIT_MANAGER=openrc.
 # Yocto style: inherit core-image features_check, use IMAGE_FEATURES for

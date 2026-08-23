@@ -66,7 +66,7 @@ Notes:
 - The first build downloads all sources and compiles everything from scratch — expect hours. Subsequent builds reuse `sstate-cache/` and `downloads/`, so they are much faster.
 - `PODMAN_WORKDIR` is captured when `environment` is sourced, so always source it from the repo root.
 - Images land in `build/tmp/deploy/images/raspberrypi4-64/`.
-- `DISTRO_FEATURES` stays `opengl wayland x11` globally (wrynose 6.0, `INIT_MANAGER = "openrc"`, `MACHINE = "raspberrypi4-64"`); per-image enforcement is via `REQUIRED_DISTRO_FEATURES` + `features_check` (see table below).
+- `DISTRO_FEATURES` stays `opengl wayland x11 pam` globally (wrynose 6.0, `INIT_MANAGER = "openrc"`, `MACHINE = "raspberrypi4-64"`); per-image enforcement is via `REQUIRED_DISTRO_FEATURES` + `features_check` (see table below).
 - `NEOPIOS_EXTRA` (`neopios-extra.inc`) defaults to `1` (hobby/edu/thin extra on); set `NEOPIOS_EXTRA = "0"` in `build/conf/local.conf` or `NEOPIOS_EXTRA=0 bitbake <image>` for minimal.
 
 
@@ -107,12 +107,12 @@ Key settings and where they live:
 | `INIT_MANAGER` | `openrc` | `meta-neopios/conf/distro/neopios.conf` |
 | Kernel provider | `linux-raspberrypi` | `meta-neopios/conf/distro/include/neopios.inc` |
 | `PACKAGE_CLASSES` | `package_ipk` | `build/conf/local.conf` |
-| `DISTRO_FEATURES` | + `opengl wayland x11` | `neopios.conf` (global, unchanged) |
+| `DISTRO_FEATURES` | + `opengl wayland x11 pam` | `neopios.conf` (global) |
 | Opted-out features | `ptest vulkan multiarch` | `neopios.conf` (wrynose mechanism) |
 
 ### Display images — comparison
 
-Three variants share `include/neopios-common.inc` (minimal) + `include/neopios-extra.inc` (`NEOPIOS_EXTRA=1` hobby/edu/thin extra) and `include/core-image-neopios.inc` (boot + `LICENSE`). Each inherits `core-image` + `features_check` and enforces its required distro features; global `DISTRO_FEATURES` stays `opengl wayland x11`.
+Three variants share `include/neopios-common.inc` (minimal) + `include/neopios-extra.inc` (`NEOPIOS_EXTRA=1` hobby/edu/thin extra) and `include/core-image-neopios.inc` (boot + `LICENSE`). Each inherits `core-image` + `features_check` and enforces its required distro features; global `DISTRO_FEATURES` stays `opengl wayland x11 pam`.
 
 | Image | `IMAGE_FEATURES` | `REQUIRED_DISTRO_FEATURES` | Display stack | Packages (on top of common) | Use case |
 |-------|------------------|-----------------------------|---------------|------------------------------|----------|
