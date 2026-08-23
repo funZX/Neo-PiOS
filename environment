@@ -35,7 +35,7 @@ SUBMODULES="$(cat <<-EOF
 0ad6c1c34a5e07a5f8dd66ab248c1e7b37b69fa9,layers/bitbake
 ef022bf82d79015802309d14c28b13373ebe53f5,layers/openembedded-core
 6bf0d8ad57b33950bab4c7f6c037e1ccb6f6e2eb,layers/meta-openembedded
-5ccbca8001083487844a244f9b616022a21215d4,layers/meta-openrc
+b95dfea5820825d5b54e23fe7ba61f736c0eb440,layers/meta-openrc
 f62c67921474370829d24a4fa01ef88543f3906b,layers/meta-raspberrypi
 EOF
 )"
