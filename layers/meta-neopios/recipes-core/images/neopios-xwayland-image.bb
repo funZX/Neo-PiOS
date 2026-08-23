@@ -1,9 +1,10 @@
 # neopios-xwayland-image.bb - Neo-PiOS Hybrid XWayland Image
 #
 # Provides Wayland/Weston with X11 via weston-xwayland on top of the
-# common Neo-PiOS payload in include/neopios-common.inc.
+# common Neo-PiOS payload (minimal in neopios-common.inc, hobby/edu/thin
+# extra in neopios-extra.inc with NEOPIOS_EXTRA=1).
 #
-# DISTRO_FEATURES stays "opengl wayland x11" globally; per-image
+# DISTRO_FEATURES stays "opengl wayland x11 pam" globally; per-image
 # enforcement is via REQUIRED_DISTRO_FEATURES + features_check.
 # Follow wrynose 6.0 conventions, MACHINE=raspberrypi4-64, INIT_MANAGER=openrc.
 # Yocto style: inherit core-image features_check, use IMAGE_FEATURES for
@@ -11,6 +12,7 @@
 
 require include/core-image-neopios.inc
 require include/neopios-common.inc
+require include/neopios-extra.inc
 
 SUMMARY = "Neo-PiOS XWayland Hybrid Image (Wayland/Weston + X11 via XWayland)"
 DESCRIPTION = "Hybrid display image with Weston/Wayland and X11 compatibility via weston-xwayland. Retains common Neo-PiOS tooling from neopios-common.inc."
