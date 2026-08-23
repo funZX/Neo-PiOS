@@ -10,9 +10,6 @@
 [submodule "layers/meta-openrc"]
 	path = layers/meta-openrc
 	url = https://github.com/jsbronder/meta-openrc.git
-[submodule "layers/meta-security"]
-	path = layers/meta-security
-	url = https://git.yoctoproject.org/meta-security
 [submodule "layers/meta-raspberrypi"]
 	path = layers/meta-raspberrypi
 	url = https://git.yoctoproject.org/meta-raspberrypi
