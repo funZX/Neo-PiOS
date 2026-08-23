@@ -18,12 +18,11 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 
 | Path | Purpose |
 |------|---------|
-| `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (`recipes-core/images/include/neopios-common.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) + deprecated wrapper (`recipes-core/images/core-image-neopios.bb` → `neopios-xwayland-image`) |
+| `layers/meta-neopios/` | First-party layer: distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb`, `neopios-xwayland-image.bb`, `neopios-x11-image.bb`) + shared payload (`recipes-core/images/include/neopios-common.inc`) + base boot include (`recipes-core/images/include/core-image-neopios.inc`) |
 | `layers/meta-neopios/recipes-core/images/neopios-weston-image.bb` | Wayland-only image (IMAGE_FEATURES `weston`, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` | Hybrid XWayland image (IMAGE_FEATURES `x11 weston`, `weston-xwayland`, REQUIRED_DISTRO_FEATURES `wayland x11`) — renamed from `core-image-neopios.bb` via `git mv` (see `git log --follow`) |
 | `layers/meta-neopios/recipes-core/images/neopios-x11-image.bb` | X11-only image (IMAGE_FEATURES `x11 x11-base`, `packagegroup-core-x11-base`, REQUIRED_DISTRO_FEATURES `x11`) |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Shared `EXTRA_IMAGE_FEATURES` + `IMAGE_INSTALL` payload for all three display images |
-| `layers/meta-neopios/recipes-core/images/core-image-neopios.bb` | Deprecated compatibility wrapper (`require neopios-xwayland-image.bb` + `bbwarn`); use `neopios-xwayland-image` for new builds |
 | `layers/bitbake` | BitBake build tool |
 | `layers/openembedded-core` | OE-Core: base metadata, classes, and the `oe-init-build-env` entrypoint |
 | `layers/meta-openembedded` | Extra recipes (meta-oe, meta-perl, meta-python, meta-networking, meta-filesystems sublayers) |
@@ -58,8 +57,6 @@ source layers/openembedded-core/oe-init-build-env build
 bitbake neopios-weston-image    # Wayland-only (strict, no X11)
 bitbake neopios-xwayland-image  # hybrid XWayland (Wayland/Weston + X11 via weston-xwayland) — canonical image
 bitbake neopios-x11-image       # X11-only (no Wayland/Weston)
-# legacy wrapper still parses (emits bbwarn):
-bitbake core-image-neopios      # deprecated — use neopios-xwayland-image
 ```
 
 Notes:
@@ -68,7 +65,7 @@ Notes:
 - `PODMAN_WORKDIR` is captured when `environment` is sourced, so always source it from the repo root.
 - Images land in `build/tmp/deploy/images/raspberrypi4-64/`.
 - `DISTRO_FEATURES` stays `opengl wayland x11` globally (wrynose 6.0, `INIT_MANAGER = "openrc"`, `MACHINE = "raspberrypi4-64"`); per-image enforcement is via `REQUIRED_DISTRO_FEATURES` + `features_check` (see table below).
-- `neopios-xwayland-image` is the direct successor to `core-image-neopios` (preserved via `git mv`; `git log --follow -- layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` shows continuity). `core-image-neopios.bb` remains as a thin deprecated wrapper for compatibility.
+- `neopios-xwayland-image` is the direct successor to `core-image-neopios` (preserved via `git mv`; `git log --follow -- layers/meta-neopios/recipes-core/images/neopios-xwayland-image.bb` shows continuity). `core-image-neopios.bb` has been removed — use `neopios-xwayland-image`.
 
 ### Host-side helper (after `source environment`)
 
