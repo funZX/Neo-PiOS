@@ -1,34 +1,29 @@
+# neopios-xwayland-image.bb - Neo-PiOS Hybrid XWayland Image
+#
+# Canonical hybrid image renamed from core-image-neopios.bb via git mv
+# to preserve git history (git log --follow shows continuity).
+# Provides Wayland/Weston with X11 via weston-xwayland on top of the
+# common Neo-PiOS payload in include/neopios-common.inc.
+#
+# DISTRO_FEATURES stays "opengl wayland x11" globally; per-image
+# enforcement is via REQUIRED_DISTRO_FEATURES + features_check.
+# Follow wrynose 6.0 conventions, MACHINE=raspberrypi4-64, INIT_MANAGER=openrc.
+# Yocto style: inherit core-image features_check, use IMAGE_FEATURES for
+# display backends, IMAGE_INSTALL:append for XWayland compat.
+
 require include/core-image-neopios.inc
+require include/neopios-common.inc
 
-SUMMARY = "Neo-PiOS Minimal Image"
+SUMMARY = "Neo-PiOS XWayland Hybrid Image (Wayland/Weston + X11 via XWayland)"
+DESCRIPTION = "Hybrid display image with Weston/Wayland and X11 compatibility via weston-xwayland. Retains common Neo-PiOS tooling from neopios-common.inc. Canonical successor to core-image-neopios.bb."
 
-EXTRA_IMAGE_FEATURES = "allow-empty-password allow-root-login empty-root-password post-install-logging package-management tools-debug tools-profile"
+LICENSE = "MIT"
+
+inherit core-image features_check
+
 IMAGE_FEATURES:append = " x11 weston"
 
-IMAGE_INSTALL:append = " \
-\   
-    weston-xwayland \
-\
-    bash \
-    coreutils \
-    iproute2 \
-    iproute2-tc \
-    iproute2-ss \
-    iputils \
-    dhcpcd \
-    ifplugd \
-    resolvconf \
-    kmod \
-    net-tools \
-    iptraf \
-    procps \
-    psmisc \
-    util-linux \
-    openssh \
-    gdb \
-    sudo \
-    python3 \
-\
-    icu \
-    tzdata \
-"
+# XWayland compatibility - allows X11 clients on Weston
+IMAGE_INSTALL:append = " weston-xwayland"
+
+REQUIRED_DISTRO_FEATURES = "wayland x11"
