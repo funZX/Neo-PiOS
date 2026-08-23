@@ -5,5 +5,5 @@ downloads/
 build/bitbake*
 build/swap*
 .tmp/
-.opencode/
+.opencode
 build/conf/conf-summary.txt
