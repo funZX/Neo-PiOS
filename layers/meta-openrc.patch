@@ -21,31 +21,33 @@ index 00fbbf7..4858fd5 100644
 -LAYERSERIES_COMPAT_openrc-layer = "whinlatter"
 +LAYERSERIES_COMPAT_openrc-layer = "wrynose"
 diff --git a/recipes-init/openrc-inittab-busybox/openrc-inittab-busybox_1.0.bb b/recipes-init/openrc-inittab-busybox/openrc-inittab-busybox_1.0.bb
-index b96b213..460b040 100644
+index b96b213..a20e3a7 100644
 --- a/recipes-init/openrc-inittab-busybox/openrc-inittab-busybox_1.0.bb
 +++ b/recipes-init/openrc-inittab-busybox/openrc-inittab-busybox_1.0.bb
-@@ -3,7 +3,7 @@ LICENSE = "MIT"
+@@ -3,8 +3,7 @@ LICENSE = "MIT"
  LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
  
  SRC_URI = "file://inittab.in"
 -S = "${WORKDIR}/sources"
-+S = "${UNPACKDIR}/sources"
- UNPACKDIR = "${S}"
+-UNPACKDIR = "${S}"
++S = "${UNPACKDIR}"
  RPROVIDES:${PN} = "${@oe.utils.conditional('VIRTUAL-RUNTIME_init_manager', 'busybox', 'virtual-openrc-inittab', '', d)}"
  
+ INHIBIT_DEFAULT_DEPS = "1"
 diff --git a/recipes-init/openrc-inittab-sysvinit/openrc-inittab-sysvinit_1.0.bb b/recipes-init/openrc-inittab-sysvinit/openrc-inittab-sysvinit_1.0.bb
-index ea05cc1..697019c 100644
+index ea05cc1..f06fbf8 100644
 --- a/recipes-init/openrc-inittab-sysvinit/openrc-inittab-sysvinit_1.0.bb
 +++ b/recipes-init/openrc-inittab-sysvinit/openrc-inittab-sysvinit_1.0.bb
-@@ -3,7 +3,7 @@ LICENSE = "MIT"
+@@ -3,8 +3,7 @@ LICENSE = "MIT"
  LIC_FILES_CHKSUM = "file://${COREBASE}/meta/COPYING.MIT;md5=3da9cfbcb788c80a0384361b4de20420"
  
  SRC_URI = "file://inittab.in"
 -S = "${WORKDIR}/sources"
-+S = "${UNPACKDIR}/sources"
- UNPACKDIR = "${S}"
+-UNPACKDIR = "${S}"
++S = "${UNPACKDIR}"
  RPROVIDES:${PN} = "${@oe.utils.conditional('VIRTUAL-RUNTIME_init_manager', 'sysvinit', 'virtual-openrc-inittab', '', d)}"
  
+ INHIBIT_DEFAULT_DEPS = "1"
 diff --git a/recipes-init/udev-init-scripts/udev-init-scripts_35.bb b/recipes-init/udev-init-scripts/udev-init-scripts_35.bb
 index 9a78cf3..a222fef 100644
 --- a/recipes-init/udev-init-scripts/udev-init-scripts_35.bb
