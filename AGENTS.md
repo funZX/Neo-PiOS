@@ -29,7 +29,7 @@ Pick the image that matches the desired display stack.
 ## Critical gotchas
 
 - **Sourcing `environment` is destructive**: `reset_submodules` runs `git clean -fxd` + `git reset --hard` + checkout of pinned SHAs in every submodule, then re-applies layer patches. Hand-edits inside `layers/<submodule>/` will be wiped. Put changes in `meta-neopios` or encode them as a patch.
-- **Layer patch convention**: `layers/<layer-name>.patch` at repo root (e.g. `layers/meta-openrc.patch`) is applied automatically after pinned checkout.
+- **Layer patch convention**: `layers/<layer-name>.patch` at repo root is applied automatically after pinned checkout (if present; `meta-openrc` currently tracks upstream `master` without patch).
 - **Submodule pins live in two places**: the git link AND the hardcoded `SUBMODULES` list in `environment`. Update both when repinning.
 - Builds are long, disk- and RAM-hungry. If OOM: `cd build && sudo ./mkswap.sh` adds a 16 GiB swapfile.
 
