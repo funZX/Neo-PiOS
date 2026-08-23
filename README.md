@@ -52,8 +52,7 @@ All builds run inside a rootless podman container — never on the host directly
 source environment        # builds the container image on first use; syncs submodules
 bb.shell                  # interactive shell in the container (repo mounted at ~/workspace)
 
-# inside the container
-source layers/openembedded-core/oe-init-build-env build
+# inside the container (oe-init auto-sourced via ~/.bash_profile on bb.shell -l login)
 bitbake neopios-weston-image    # Wayland-only (strict, no X11)
 bitbake neopios-xwayland-image  # hybrid XWayland (Wayland/Weston + X11 via weston-xwayland)
 bitbake neopios-x11-image       # X11-only (no Wayland/Weston)
@@ -73,7 +72,7 @@ Notes:
 |---------|-------------|
 | `bb.shell` | Interactive shell in the container |
 
-### BitBake aliases (source `build/env-neopios.sh` inside the OE environment)
+### BitBake aliases (available at login via `~/.bash_profile` — inside `if [ -f ...oe-init-build-env ]` block, `oe-init-build-env` sourced automatically on login)
 
 | Alias | Action |
 |-------|--------|

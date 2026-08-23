@@ -27,7 +27,7 @@ RUN echo 'root:docker' | chpasswd
 USER ${DOCKER_USER}
 
 WORKDIR /home/${DOCKER_USER}/workspace
-COPY --chown=${DOCKER_USER}:${DOCKER_USER} bashrc /home/${DOCKER_USER}/.bashrc
+COPY --chown=${DOCKER_USER}:${DOCKER_USER} bash_profile /home/${DOCKER_USER}/.bash_profile
 
 CMD ["/bin/bash"]
 

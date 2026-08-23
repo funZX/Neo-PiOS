@@ -16,8 +16,7 @@ Builds run in a rootless **podman** container (image `linux-build-wrynose`, auto
 ```sh
 source environment   # builds podman image if missing; inits + resets submodules
 bb.shell             # interactive shell in the container (repo mounted at ~/workspace)
-# inside the container:
-source layers/openembedded-core/oe-init-build-env build
+# inside the container (oe-init auto-sourced via ~/.bash_profile on bb.shell -l login):
 bitbake neopios-weston-image      # Wayland-only
 bitbake neopios-xwayland-image    # hybrid XWayland
 bitbake neopios-x11-image         # X11-only
@@ -36,7 +35,7 @@ Pick the image that matches the desired display stack.
 
 ## Bitbake aliases
 
-Source `build/env-neopios.sh` inside the OE environment:
+Available at login via `~/.bash_profile` (PS1 + aliases inside `if [ -f ...oe-init-build-env ]` block — `oe-init-build-env` sourced automatically on `bb.shell -l` login shells):
 
 - `bb` = bitbake; `bb.clean` = clean/cleansstate
 - `bb.edit <recipe>` / `bb.apply` / `bb.close` = devtool modify / update-recipe / reset. `bb.apply` writes changes back into `../layers/meta-neopios` — recipe customization belongs there.
