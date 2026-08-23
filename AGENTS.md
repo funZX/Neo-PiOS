@@ -19,7 +19,7 @@ source layers/openembedded-core/oe-init-build-env build
 bitbake core-image-neopios
 ```
 
-Host-side helpers from `environment`: `bb.run "<cmd>"`, `bb.exec <cmd>`, `bb.shell`, `bb.purge`.
+Host-side helper from `environment`: `bb.shell` (interactive shell in the container).
 
 ## Critical gotchas
 

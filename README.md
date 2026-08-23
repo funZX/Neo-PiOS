@@ -28,7 +28,7 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 
 ## Requirements
 
-- Linux host with **podman** (rootless). All other build dependencies live inside the container image (`ubuntu:22.04` base), which is built automatically on first use.
+- Linux host with **podman** (rootless). All other build dependencies live inside the container image (`ubuntu:26.04` base), which is built automatically on first use.
 - Generous disk space — a full build consumes tens of GB under `build/tmp*`, `build/sstate-cache/`, and `downloads/`.
 - Plenty of RAM — if the build machine OOMs, add a 16 GiB swapfile:
 
@@ -56,14 +56,11 @@ Notes:
 - `PODMAN_WORKDIR` is captured when `environment` is sourced, so always source it from the repo root.
 - Images land in `build/tmp/deploy/images/raspberrypi4-64/`.
 
-### Host-side helpers (after `source environment`)
+### Host-side helper (after `source environment`)
 
 | Command | Description |
 |---------|-------------|
-| `bb.run "<cmd>"` | Run a command inside the container |
-| `bb.exec <cmd>` | Run an arbitrary command in the container |
 | `bb.shell` | Interactive shell in the container |
-| `bb.purge` | Remove stopped containers |
 
 ### BitBake aliases (source `build/env-neopios.sh` inside the OE environment)
 
