@@ -1,13 +1,13 @@
 diff --git a/conf/layer.conf b/conf/layer.conf
-index 80d5bc6..d0319c6 100644
+index 00fbbf7..6f17df9 100644
 --- a/conf/layer.conf
 +++ b/conf/layer.conf
 @@ -33,4 +33,4 @@ BBFILE_PRIORITY_openrc-layer = "7"
  OPENRC_INITDIR = "${sysconfdir}/init.d"
  OPENRC_CONFDIR = "${sysconfdir}/conf.d"
  
--LAYERSERIES_COMPAT_openrc-layer = "mickledore"
-+LAYERSERIES_COMPAT_openrc-layer = "mickledore nanbield"
+-LAYERSERIES_COMPAT_openrc-layer = "whinlatter"
++LAYERSERIES_COMPAT_openrc-layer = "whinlatter wrynose"
 diff --git a/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend b/dynamic-layers/meta-virtualization/docker/docker-ce_%.bbappend
 deleted file mode 100644
 index 8b6b7bc..0000000
