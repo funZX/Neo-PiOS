@@ -124,6 +124,6 @@ Image content (`core-image-neopios`):
 |---------|-----|
 | Build killed / OOM | Add swap: `cd build && sudo ./mkswap.sh` |
 | Disk-space abort from bitbake | Free space — disk monitoring halts builds below thresholds (`BB_DISKMON_DIRS` in `local.conf`) |
-| Stale/stopped containers piling up | `bb.purge` |
+| Stale/stopped containers piling up | `podman rm $(podman ps -aq)` |
 | Layer changes vanished | Expected — `environment` resets submodules; encode changes as patches or move them into `meta-neopios` |
 | Weird fetcher failures after repinning | Ensure the git link *and* the `SUBMODULES` list in `environment` point at the same revision |
