@@ -1,10 +1,7 @@
 # neopios-common-dev.inc - Dev add-on for Neo-PiOS display images
 #
-# Extends neopios-common.inc (minimal production) with debug/profile
-# conveniences and extra tooling. Keeps package-management (opkg) from
-# minimal, adds tools-debug/tools-profile and empty-password for dev.
-# Drops python3/icu (removed from minimal) and keeps dev extras lean
-# (no ifplugd/resolvconf per request).
+# Extends neopios-common.inc with debug/profile conveniences and
+# extra tooling for development images.
 #
 # Usage: add `require include/neopios-common-dev.inc` *instead of*
 # `require include/neopios-common.inc` in a -dev image, or include

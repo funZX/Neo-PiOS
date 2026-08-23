@@ -4,7 +4,7 @@
 
 Neo-PiOS: a custom embedded Linux distro built with Yocto/OpenEmbedded (**wrynose 6.0**) targeting `raspberrypi4-64`, using **OpenRC** init (not systemd). All upstream metadata lives in git submodules under `layers/`. First-party code is only:
 
-- `layers/meta-neopios/` — distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb` Wayland-only, `neopios-xwayland-image.bb` hybrid XWayland, `neopios-x11-image.bb` X11-only) + shared payload (`recipes-core/images/include/neopios-common.inc`)
+- `layers/meta-neopios/` — distro config (`conf/distro/neopios.conf`) + display images (`recipes-core/images/neopios-weston-image.bb` Wayland-only, `neopios-xwayland-image.bb` hybrid XWayland, `neopios-x11-image.bb` X11-only) + shared payload (minimal `recipes-core/images/include/neopios-common.inc`, dev `recipes-core/images/include/neopios-common-dev.inc`)
 - `environment`, `docker/`, `build/` — build orchestration
 
 Choose a display variant per build: `neopios-weston-image` (Wayland-only, `REQUIRED_DISTRO_FEATURES = "wayland"`), `neopios-xwayland-image` (hybrid, `wayland x11` + `weston-xwayland`), or `neopios-x11-image` (X11-only, `x11` + `packagegroup-core-x11-base`). `DISTRO_FEATURES` stays `opengl wayland x11` globally; enforcement is per-image via `REQUIRED_DISTRO_FEATURES` + `features_check`.
