@@ -13,7 +13,7 @@ require include/core-image-neopios.inc
 require include/neopios-common.inc
 
 SUMMARY = "Neo-PiOS XWayland Hybrid Image (Wayland/Weston + X11 via XWayland)"
-DESCRIPTION = "Hybrid display image with Weston/Wayland and X11 compatibility via weston-xwayland. Retains common Neo-PiOS tooling from neopios-common.inc. Canonical successor to core-image-neopios.bb."
+DESCRIPTION = "Hybrid display image with Weston/Wayland and X11 compatibility via weston-xwayland. Retains common Neo-PiOS tooling from neopios-common.inc."
 
 LICENSE = "MIT"
 

@@ -5,7 +5,9 @@ Common targets are:
     
     core-image-minimal
     core-image-weston
-    core-image-neopios
+    neopios-weston-image
+    neopios-xwayland-image
+    neopios-x11-image
 
 You can also run generated qemu images with a command like 'runqemu qemux86-64'.
 
