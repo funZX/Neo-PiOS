@@ -1,3 +1,15 @@
+diff --git a/conf/distro/include/init-manager-openrc.inc b/conf/distro/include/init-manager-openrc.inc
+index 3778748..5c4a58e 100644
+--- a/conf/distro/include/init-manager-openrc.inc
++++ b/conf/distro/include/init-manager-openrc.inc
+@@ -1,6 +1,6 @@
+ # Use OpenRC for system initialization
+ DISTRO_FEATURES:append = " openrc"
+-DISTRO_FEATURES_BACKFILL_CONSIDERED:append = " sysvinit systemd"
++DISTRO_FEATURES_OPTED_OUT:append = " sysvinit systemd"
+ VIRTUAL-RUNTIME_init_manager ??= "openrc-init"
+ VIRTUAL-RUNTIME_initscripts ??= "openrc"
+ VIRTUAL-RUNTIME_login_manager ??= "busybox"
 diff --git a/conf/layer.conf b/conf/layer.conf
 index 00fbbf7..6f17df9 100644
 --- a/conf/layer.conf
