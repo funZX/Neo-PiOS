@@ -135,6 +135,40 @@ Variant notes:
 3. The system boots into the selected Wayland compositor (Weston for `neopios-weston-image`, Labwc for `neopios-labwc-image`) with OpenRC as the init system.
 4. SSH access is available over the network — root login with an empty password is enabled by default (development convenience; tighten before any real deployment).
 
+### First Boot — SSH Login
+
+After the image boots, you can log in via SSH using one of these methods:
+
+**By hostname (mDNS/ZeroConf, recommended):**
+```sh
+ssh root@neopios.local
+```
+> Requires `avahi-daemon` (included) and mDNS support on your client (Linux/macOS/Windows with Bonjour).
+
+**By IP address:**
+```sh
+# Find the Pi's IP (check your router's DHCP lease table, or use nmap):
+nmap -sn 192.168.1.0/24 | grep neopios
+
+# Then connect:
+ssh root@<IP_ADDRESS>
+```
+
+**Credentials:**
+- **User:** `root`
+- **Password:** *(empty — just press Enter)*
+
+> ⚠️ **Security:** The default empty root password is for development convenience. **Change it immediately** after first login:
+> ```sh
+> passwd root
+> ```
+
+**If SSH fails:**
+- Ensure the Pi is on the same network (wired Ethernet recommended for first boot)
+- Check that `avahi-daemon` is running: `systemctl status avahi-daemon` (or `/etc/init.d/avahi-daemon status` on OpenRC)
+- Verify SSH service: `/etc/init.d/sshd status`
+- For Wi-Fi: configure `wpa_supplicant.conf` first (see [Network Configuration](#network-configuration))
+
 ### Flashing on Windows (Raspberry Pi Imager)
 
 The easiest way to flash the `.wic.bz2` image on Windows is using the official **Raspberry Pi Imager**:
