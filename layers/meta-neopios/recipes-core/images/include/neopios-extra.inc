@@ -14,8 +14,7 @@ IMAGE_INSTALL:append = " \
         python3 python3-pip python3-pyserial \
         i2c-tools libgpiod libgpiod-tools \
         git vim nano htop usbutils \
-        geany man man-pages bash-completion \
-        freerdp \
+        man man-pages bash-completion \
         pulseaudio alsa-utils \
         wpa-supplicant iw rfkill linux-firmware-bcm43455 \
         kernel-module-brcmfmac kernel-module-brcmutil kernel-module-cfg80211 \
