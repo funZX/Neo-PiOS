@@ -1,0 +1,29 @@
+From: Neo-PiOS <neopios@example.com>
+Subject: [PATCH] meson: fix aml pkg-config name (aml1 not aml)
+
+The aml library (v1.0.0) provides pkg-config file named 'aml1' not 'aml'
+(filebase: 'aml1' in aml/meson.build -> aml1.pc). Weston's VNC backend
+meson.build looks for dependency('aml') but should look for
+dependency('aml1') to match the actual pkg-config filename (as already
+fixed in neatvnc via 0001-meson-Use-new-pkgconfig-for-aml1.patch).
+
+Upstream-Status: Pending
+
+Signed-off-by: Neo-PiOS <neopios@example.com>
+---
+ libweston/backend-vnc/meson.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libweston/backend-vnc/meson.build b/libweston/backend-vnc/meson.build
+index 1234567..abcdefg 100644
+--- a/libweston/backend-vnc/meson.build
++++ b/libweston/backend-vnc/meson.build
+@@ -8,7 +8,7 @@
+ 	error('VNC backend requires neatvnc which was not found. Or, you can use \'-Dbackend-vnc=false\'.')
+ endif
+ 
+-dep_aml = dependency('aml', version: ['>= 0.3.0', '< 0.4.0'], required: false, fallback: ['aml', 'aml_dep'])
++dep_aml = dependency('aml1', version: ['>= 0.3.0', '< 2.0.0'], required: false, fallback: ['aml', 'aml_dep'])
+ if not dep_aml.found()
+ 	error('VNC backend requires libaml which was not found. Or, you can use \'-Dbackend-vnc=false\'.')
+ endif
