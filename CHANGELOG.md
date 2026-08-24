@@ -5,34 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Ubuntu-style versioning](https://ubuntu.com/about/release-cycle) (YY.MM).
 
-## [26.08] - 2026-08-24
+## [28.08] - 2026-08-24
 
-### Added
-- **Labwc compositor** — Wayland-only wlroots-based compositor as second display option (`neopios-labwc-image`)
-- **Pi 4 Wi-Fi support** — brcmfmac driver + bcm43455 firmware via `linux-firmware-bcm43455`
-- **Weston VNC backend** — headless/VNC access via `neatvnc` + `aml` (`weston --backend=vnc`)
-- **meta-wayland layer** — added as submodule (codeberg.org/flk/meta-wayland, wrynose `3634f036`)
-- **OpenRC PAM support** — `pam_openrc.so` packaged for OpenRC with PAM in DISTRO_FEATURES
+### Neo-PiOS 28.08 — First Release
 
-### Changed
-- **Wayland-only distro** — removed `x11` from `DISTRO_FEATURES` (now `opengl wayland pam wifi`)
-- **Dropped X11 images** — removed `neopios-x11-image` and `neopios-xwayland-image`
-- **Dropped epiphany browser** — requires X11, not compatible with Wayland-only
-- **Dropped geany IDE** — removes GTK3 dependency stack (~35-60MB savings)
-- **Dropped freerdp** — RDP client not needed for default education/hobby use (~20-30MB savings)
-- **DISTRO_VERSION format** — changed to Ubuntu-style `YY.MM` (`26.08`)
+**Wayland-only embedded Linux for Raspberry Pi 4 (64-bit)**
 
-### Fixed
-- **Weston VNC build** — fixed aml pkg-config name (`aml1` not `aml`) and version constraint (`< 2.0.0` for aml 1.0.0)
-- **OpenRC QA error** — `pam_openrc.so` now properly packaged when PAM enabled
-- **meta-openrc submodule** — tracks upstream `master` (no local patch needed)
+#### Display Options
+- **neopios-weston-image** — Weston compositor (Wayland reference implementation)
+- **neopios-labwc-image** — Labwc (wlroots-based, lightweight tiling window manager)
 
-### Security
-- **PAM enabled** — required for Weston VNC, sudo, shadow; `DISTRO_FEATURES` includes `pam`
+#### Core Features
+- **Wayland-only graphics stack** — no X11, `DISTRO_FEATURES = "opengl wayland pam wifi"`
+- **OpenRC init system** — simple, fast, no systemd
+- **VNC backend** — headless access via `weston --backend=vnc` (neatvnc + aml)
+- **Pi 4 Wi-Fi** — onboard brcmfmac + bcm43455 firmware
+- **Package management** — opkg for on-device package installation
+
+#### Education & Hobby Payload (NEOPIOS_EXTRA=1 default)
+- **Python 3** — python3, pip, pyserial for scripting and education
+- **GPIO/I2C** — i2c-tools, libgpiod for hardware projects
+- **Development tools** — git, vim, nano, htop, usbutils
+- **Audio** — pulseaudio, alsa-utils
+- **Documentation** — man pages, bash-completion
+
+#### Minimal Variant
+- Set `NEOPIOS_EXTRA = "0"` for factory image (~110-170MB rootfs)
+- Boot + display compositor only, no extra packages
+
+#### Build System
+- Yocto/OpenEmbedded (wrynose 6.0)
+- Reproducible podman build container
+- Pinned layer submodules
 
 ---
 
-## Upcoming (26.11)
+## Upcoming (28.11)
 
 ### Planned
 - [ ] SDK/populate_sdk validation
@@ -42,4 +50,4 @@ and this project adheres to [Ubuntu-style versioning](https://ubuntu.com/about/r
 
 ## Release Notes Links
 
-- [26.08 Release](https://github.com/funZX/Neo-PiOS/releases/tag/26.08) (when published)
+- [28.08 Release](https://github.com/funZX/Neo-PiOS/releases/tag/28.08) (when published)
