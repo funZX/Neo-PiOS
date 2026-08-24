@@ -135,6 +135,26 @@ Variant notes:
 3. The system boots into the selected Wayland compositor (Weston for `neopios-weston-image`, Labwc for `neopios-labwc-image`) with OpenRC as the init system.
 4. SSH access is available over the network — root login with an empty password is enabled by default (development convenience; tighten before any real deployment).
 
+### Flashing on Windows (Raspberry Pi Imager)
+
+The easiest way to flash the `.wic.bz2` image on Windows is using the official **Raspberry Pi Imager**:
+
+1. **Download Raspberry Pi Imager** from [raspberrypi.com/software](https://www.raspberrypi.com/software/) and install it.
+2. **Insert your SD card** (minimum 4 GB, 8 GB+ recommended) into your Windows PC.
+3. **Open Raspberry Pi Imager**.
+4. Click **Choose OS** → scroll to the bottom → select **Use custom**.
+5. In the file dialog, navigate to your build output directory and select the `.wic.bz2` file:
+   ```
+   build/tmp/deploy/images/raspberrypi4-64/neopios-weston-image-raspberrypi4-64-<date>.26.08.wic.bz2
+   ```
+   (or `neopios-labwc-image-...wic.bz2` for the Labwc variant)
+6. Click **Choose Storage** → select your SD card.
+   ⚠️ **Warning:** This will erase all data on the selected card.
+7. Click **Write** and wait for the process to complete (writing + verification).
+8. When finished, safely eject the SD card, insert it into your Raspberry Pi 4, and power it on.
+
+> **Note:** Raspberry Pi Imager natively supports `.wic.bz2` (and `.wic.gz`, `.wic.xz`) — no manual decompression needed.
+
 ## Customizing
 
 - Distro/image changes belong in `layers/meta-neopios/` — that is the only layer this project owns.
