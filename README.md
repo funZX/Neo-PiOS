@@ -21,9 +21,9 @@ A custom embedded Linux distribution built with [Yocto/OpenEmbedded](https://www
 | `layers/meta-neopios/recipes-core/images/neopios-weston-image.bb` | Wayland-only Weston image (IMAGE_FEATURES `weston`, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/neopios-labwc-image.bb` | Wayland-only Labwc image (wlroots-based, REQUIRED_DISTRO_FEATURES `wayland`) |
 | `layers/meta-neopios/recipes-core/images/include/neopios-common.inc` | Minimal `EXTRA_IMAGE_FEATURES` (`package-management`) + `IMAGE_INSTALL` for both images |
-| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`geany`, `freerdp`, `pulseaudio`, `wpa-supplicant`/`iw`/`rfkill` + `linux-firmware-bcm43455`/`brcmfmac` (Pi 4 Wi-Fi, `DISTRO_FEATURES wifi`) |
+| `layers/meta-neopios/recipes-core/images/include/neopios-extra.inc` | Hobby/DIY + Education + Thin Client extra (`NEOPIOS_EXTRA=1` default, `0` for minimal) — `python3`/`pip`/`pyserial`, `i2c-tools`/`libgpiod`, `git`/`vim`/`nano`/`htop`/`usbutils`, `freerdp`, `pulseaudio`, `wpa-supplicant`/`iw`/`rfkill` + `linux-firmware-bcm43455`/`brcmfmac` (Pi 4 Wi-Fi, `DISTRO_FEATURES wifi`) |
 | `layers/meta-neopios/recipes-graphics/wayland/weston_%.bbappend` | Enables Weston's VNC backend (`PACKAGECONFIG:append = " vnc"` via `neatvnc`/`libpam`, `weston --backend=vnc` / `weston.ini [core] backend=vnc-backend.so`) for weston |
-| `layers/meta-neopios/recipes-core/images/include/neopios-common-dev.inc` | Dev add-on extending minimal with `tools-debug`/`tools-profile`, `post-install-logging`, empty-password and extra tools (`gdb`, `net-tools`, `iptraf`) |
+| `layers/meta-neopios/recipes-core/images/include/neopios-common-dev.inc` | Dev add-on extending minimal with `tools-debug`/`tools-profile`, `post-install-logging`, `allow-empty-password`/`allow-root-login`/`empty-root-password` and extra tools (`gdb`, `net-tools`, `iptraf`) |
 | `layers/bitbake` | BitBake build tool |
 | `layers/openembedded-core` | OE-Core: base metadata, classes, and the `oe-init-build-env` entrypoint |
 | `layers/meta-openembedded` | Extra recipes (meta-oe, meta-perl, meta-python, meta-networking, meta-filesystems sublayers) |
@@ -54,7 +54,7 @@ All builds run inside a rootless podman container — never on the host directly
 source environment        # builds the container image on first use; syncs submodules
 bb.shell                  # interactive shell in the container (repo mounted at ~/workspace)
 
-# inside the container (oe-init auto-sourced via ~/.bash_profile on bb.shell -l login)
+# inside the container (oe-init auto-sourced via ~/.bash_profile on bb.shell -l login):
 bitbake neopios-weston-image    # Wayland-only Weston
 bitbake neopios-labwc-image     # Wayland-only Labwc (wlroots)
 ```
@@ -120,7 +120,7 @@ Two Wayland variants share `include/neopios-common.inc` (minimal) + `include/neo
 Common payload:
 
 - Minimal (`neopios-common.inc` for both): `EXTRA_IMAGE_FEATURES = "package-management"` (`opkg`); `IMAGE_INSTALL` = `bash`, `coreutils`, `iproute2`, `iputils`, `dhcpcd`, `kmod`, `procps`, `psmisc`, `util-linux`, `openssh`, `sudo`, `tzdata-core`
-- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`/`geany`/`man`/`bash-completion`, `freerdp`, `pulseaudio`/`alsa-utils`, `wpa-supplicant`/`iw`/`rfkill` + `linux-firmware-bcm43455`/`kernel-module-brcmfmac` (Pi 4 Wi-Fi, `wifi` in `DISTRO_FEATURES`)
+- Hobby/DIY + Education + Thin Client (`neopios-extra.inc`, `NEOPIOS_EXTRA=1` default, `0` for minimal): `python3`/`python3-pip`/`python3-pyserial`, `i2c-tools`/`libgpiod`/`libgpiod-tools`, `git`/`vim`/`nano`/`htop`/`usbutils`, `freerdp`, `pulseaudio`/`alsa-utils`, `wpa-supplicant`/`iw`/`rfkill` + `linux-firmware-bcm43455`/`kernel-module-brcmfmac` (Pi 4 Wi-Fi, `wifi` in `DISTRO_FEATURES`)
 - Dev add-on (`neopios-common-dev.inc` extends minimal): adds `tools-debug`, `tools-profile`, `post-install-logging`, `allow-empty-password`/`allow-root-login`/`empty-root-password` and `gdb`, `iproute2-tc`/`ss`, `net-tools`, `iptraf`
 
 Variant notes:
@@ -133,7 +133,41 @@ Variant notes:
 1. Flash the generated image file from `build/tmp/deploy/images/raspberrypi4-64/` onto an SD card (e.g. with `dd`, Raspberry Pi Imager, or `balenaEtcher`).
 2. Insert the card into the Raspberry Pi 4 and power it on.
 3. The system boots into the selected Wayland compositor (Weston for `neopios-weston-image`, Labwc for `neopios-labwc-image`) with OpenRC as the init system.
-4. SSH access is available over the network — root login with an empty password is enabled by default (development convenience; tighten before any real deployment).
+4. SSH access is available over the network.
+
+### First Boot — SSH Login
+
+After the image boots, you can log in via SSH using the default user:
+
+**By hostname (mDNS/ZeroConf, recommended):**
+```sh
+ssh pi@neopios.local
+```
+> Requires `avahi-daemon` (included) and mDNS support on your client (Linux/macOS/Windows with Bonjour).
+
+**By IP address:**
+```sh
+# Find the Pi's IP (check your router's DHCP lease table, or use nmap):
+nmap -sn 192.168.1.0/24 | grep neopios
+
+# Then connect:
+ssh pi@<IP_ADDRESS>
+```
+
+**Credentials:**
+- **User:** `pi`
+- **Password:** `Neo-PiOS`
+
+> ⚠️ **Security:** The default password is for development convenience. **Change it immediately** after first login:
+> ```sh
+> passwd
+> ```
+
+**If SSH fails:**
+- Ensure the Pi is on the same network (wired Ethernet recommended for first boot)
+- Check that `avahi-daemon` is running: `/etc/init.d/avahi-daemon status` (OpenRC)
+- Verify SSH service: `/etc/init.d/sshd status`
+- For Wi-Fi: configure `wpa_supplicant.conf` first (see [Network Configuration](#network-configuration))
 
 ### Flashing on Windows (Raspberry Pi Imager)
 
