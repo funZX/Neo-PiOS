@@ -12,6 +12,10 @@
 
 EXTRA_IMAGE_FEATURES = "package-management ssh-server-openssh"
 
+# Default user: pi / Neo-PiOS
+IMAGE_CLASSES += "extrausers"
+EXTRA_USERS_PARAMS = "useradd -p '$6$PzWThDaC3XUx7eAq$G9ugomfvrSb/yJbE6xWqnUeKI4YCgjh/g/QUSS5pUkVSW3RUwgp7y6tq6yjRZj0lfIaQGWMdCxNY2xZNTE0f31' -s /bin/bash -m -U pi; "
+
 IMAGE_INSTALL:append = " \
     bash \
     coreutils \
