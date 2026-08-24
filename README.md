@@ -74,7 +74,7 @@ Both images share the same base packages. Set `NEOPIOS_EXTRA = "0"` in `build/co
 
 ## Booting the image
 
-1. Flash the generated image file from `build/tmp/deploy/images/raspberrypi4-64/` onto an SD card.
+1. Flash the generated `.wic.bz2` image file onto an SD card.
 2. Insert the card into the Raspberry Pi 4 and power it on.
 3. The system boots into the selected Wayland compositor with OpenRC as the init system.
 4. SSH access is available over the network.
