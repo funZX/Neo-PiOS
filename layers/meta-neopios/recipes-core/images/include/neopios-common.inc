@@ -10,7 +10,7 @@
 # Uses :append to extend IMAGE_INSTALL defined in include/core-image-neopios.inc
 # which provides packagegroup-core-boot + CORE_IMAGE_EXTRA_INSTALL.
 
-EXTRA_IMAGE_FEATURES = "package-management"
+EXTRA_IMAGE_FEATURES = "package-management ssh-server-openssh"
 
 IMAGE_INSTALL:append = " \
     bash \
@@ -22,7 +22,6 @@ IMAGE_INSTALL:append = " \
     procps \
     psmisc \
     util-linux \
-    openssh \
     sudo \
     tzdata-core \
 "
