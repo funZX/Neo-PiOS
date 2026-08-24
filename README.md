@@ -97,12 +97,6 @@ ssh pi@<IP_ADDRESS>
 - **User:** `pi`
 - **Password:** `Neo-PiOS`
 
-**If SSH fails:**
-- Ensure the Pi is on the same network (wired Ethernet recommended for first boot)
-- Check that `avahi-daemon` is running: `/etc/init.d/avahi-daemon status`
-- Verify SSH service: `/etc/init.d/sshd status`
-- For Wi-Fi: configure `wpa_supplicant.conf` first
-
 ### Flashing on Windows
 
 The easiest way to flash the `.wic.bz2` image on Windows is using the official **Raspberry Pi Imager**:
