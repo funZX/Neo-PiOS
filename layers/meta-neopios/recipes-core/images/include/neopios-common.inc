@@ -18,6 +18,7 @@ IMAGE_INSTALL:append = " \
     iproute2 \
     iputils \
     dhcpcd \
+    avahi-daemon \
     kmod \
     procps \
     psmisc \
