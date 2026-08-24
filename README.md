@@ -63,19 +63,6 @@ bitbake core-image-minimal     # tiny console-only image
 bitbake core-image-weston      # upstream weston without the neopios extras
 ```
 
-## Distro & image configuration
-
-Key settings and where they live:
-
-| Setting | Value | Defined in |
-|---------|-------|------------|
-| `MACHINE` | `raspberrypi4-64` | `build/conf/local.conf` |
-| `DISTRO` | `neopios` | `build/conf/local.conf` |
-| `INIT_MANAGER` | `openrc` | `meta-neopios/conf/distro/neopios.conf` |
-| `PACKAGE_CLASSES` | `package_ipk` | `build/conf/local.conf` |
-| `DISTRO_FEATURES` | `opengl wayland pam wifi` | `meta-neopios/conf/distro/neopios.conf` |
-| Opted-out features | `ptest vulkan multiarch x11 pcmcia 3g` | `meta-neopios/conf/distro/neopios.conf` |
-
 ### Display images — comparison
 
 | Image | Display | Use case |
@@ -109,11 +96,6 @@ ssh pi@<IP_ADDRESS>
 **Credentials:**
 - **User:** `pi`
 - **Password:** `Neo-PiOS`
-
-> ⚠️ **Security:** Change the password immediately after first login:
-> ```sh
-> passwd
-> ```
 
 **If SSH fails:**
 - Ensure the Pi is on the same network (wired Ethernet recommended for first boot)
