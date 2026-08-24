@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Ubuntu-style versioning](https://ubuntu.com/about/release-cycle) (YY.MM).
 
-## [28.08] - 2026-08-24
+## [26.08] - 2026-08-24
 
-### Neo-PiOS 28.08 — First Release
+### Neo-PiOS 26.08 — First Release
 
 **Wayland-only embedded Linux for Raspberry Pi 4 (64-bit)**
 
@@ -40,7 +40,7 @@ and this project adheres to [Ubuntu-style versioning](https://ubuntu.com/about/r
 
 ---
 
-## Upcoming (28.11)
+## Upcoming (26.11)
 
 ### Planned
 - [ ] SDK/populate_sdk validation
@@ -50,4 +50,4 @@ and this project adheres to [Ubuntu-style versioning](https://ubuntu.com/about/r
 
 ## Release Notes Links
 
-- [28.08 Release](https://github.com/funZX/Neo-PiOS/releases/tag/28.08) (when published)
+- [26.08 Release](https://github.com/funZX/Neo-PiOS/releases/tag/26.08) (when published)
