@@ -43,7 +43,6 @@ jobs:
             -e "LANG=en_US.UTF-8" \
             linux-build-wrynose \
             /bin/bash -c '
-              set -euo pipefail
               cd /home/ubuntu/workspace
               source layers/openembedded-core/oe-init-build-env build
               bitbake neopios-weston-image
@@ -59,7 +58,6 @@ jobs:
             -e "LANG=en_US.UTF-8" \
             linux-build-wrynose \
             /bin/bash -c '
-              set -euo pipefail
               cd /home/ubuntu/workspace
               source layers/openembedded-core/oe-init-build-env build
               bitbake neopios-labwc-image
