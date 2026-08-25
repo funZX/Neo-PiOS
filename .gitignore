@@ -7,3 +7,7 @@ build/swap*
 .tmp/
 .opencode
 build/conf/conf-summary.txt
+
+# GitHub runner bookkeeping (symlinked _work)
+_diag/
+_temp/

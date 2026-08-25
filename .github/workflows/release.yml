@@ -1,56 +1,43 @@
 name: Build Release Images
 
 # Trigger: push a version tag (YY.MM scheme, e.g. 26.08, 26.11)
+# workflow_dispatch = manual "Run workflow" button (testing without a tag;
+# release upload is skipped for manual runs).
 on:
   push:
     tags:
       - '[0-9]+.[0-9]+'
+  workflow_dispatch: {}
 
 permissions:
   contents: write   # required to upload assets to the release
 
+# Self-hosted runner: WSL2 (Gentoo) + podman.
+# - Register once with label 'yocto':
+#     ./config.sh --url https://github.com/funZX/Neo-PiOS --token <TOKEN> --labels yocto
+# - This workflow intentionally skips actions/checkout: the runner's _work
+#   is symlinked to the local clone (warm build/sstate-cache + downloads).
+# - Because there is no checkout, steps must NOT rely on the default cwd
+#   (the runner auto-creates an empty _work/<pipeline>/<repo> dir).
+#   Instead, add the absolute clone path to the runner's .env file:
+#       ~/actions-runner/.env:  NEOPIOS_REPO_DIR=/home/<you>/path/to/Neo-PiOS
+# - Persistent host => first build ~hours, subsequent tag builds ~20-40 min.
+#
+# NOTE: builds use whatever state the local clone is in — keep it on the
+# tagged commit (master) when cutting a release.
+
 jobs:
   build:
     name: Build Neo-PiOS images (${{ github.ref_name }})
-    # Self-hosted runner: WSL2 (Gentoo) + podman.
-    # Register once with label 'yocto':
-    #   ./config.sh --url https://github.com/funZX/Neo-PiOS --token <TOKEN> --labels yocto
-    # Run persistently via OpenRC init script (see scripts/github-runner.initd).
-    #
-    # Persistent host => build/sstate-cache + downloads survive between runs:
-    #   first build ~hours, subsequent tag builds ~20-40 min.
     runs-on: [self-hosted, yocto]
     timeout-minutes: 350
 
     steps:
-      - name: Ensure podman
-        run: |
-          # Gentoo host: podman already emerged -> no-op.
-          # Fallback (any Debian/Ubuntu-based host): install via apt.
-          if ! command -v podman >/dev/null 2>&1; then
-            sudo apt-get update && sudo apt-get install -y podman
-          fi
-          podman --version
-
-      - name: Checkout (with pinned submodules)
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
-      - name: Build container image (linux-build-wrynose)
-        run: |
-          podman build \
-            --build-arg "DOCKER_UID=$(id -u)" \
-            --build-arg "DOCKER_GID=$(id -g)" \
-            --build-arg "DOCKER_USER=ubuntu" \
-            -t linux-build-wrynose \
-            -f docker/Dockerfile docker
-
       - name: Build neopios-weston-image
         run: |
+          cd "$NEOPIOS_REPO_DIR"
           podman run --rm \
-            -v "$PWD":/home/ubuntu/workspace \
+            -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
             -e "HOME=/tmp/ci-home" \
             -e "LANG=en_US.UTF-8" \
             --user "$(id -u):$(id -g)" \
@@ -64,8 +51,9 @@ jobs:
 
       - name: Build neopios-labwc-image
         run: |
+          cd "$NEOPIOS_REPO_DIR"
           podman run --rm \
-            -v "$PWD":/home/ubuntu/workspace \
+            -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
             -e "HOME=/tmp/ci-home" \
             -e "LANG=en_US.UTF-8" \
             --user "$(id -u):$(id -g)" \
@@ -79,6 +67,7 @@ jobs:
 
       - name: Collect artifacts
         run: |
+          cd "$NEOPIOS_REPO_DIR"
           mkdir -p artifacts
           cp -v build/tmp/deploy/images/raspberrypi4-64/*.wic.bz2 artifacts/ || true
           cp -v build/tmp/deploy/images/raspberrypi4-64/*.manifest artifacts/ || true
@@ -93,7 +82,9 @@ jobs:
           retention-days: 7
 
       - name: Attach images to GitHub release
+        if: ${{ github.event_name == 'push' }}   # tags only; manual runs skip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          cd "$NEOPIOS_REPO_DIR"
           gh release upload "${{ github.ref_name }}" artifacts/*.wic.bz2 --clobber
