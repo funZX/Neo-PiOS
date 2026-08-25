@@ -71,11 +71,11 @@ jobs:
           rm -rf artifacts
           mkdir -p artifacts
           cp -v build/tmp/deploy/images/raspberrypi4-64/neopios-*-image-*.rootfs.wic.bz2 artifacts/ || true
-          cp -v build/tmp/deploy/images/raspberrypi4-64/*.manifest artifacts/ || true
+          cp -v build/tmp/deploy/images/raspberrypi4-64/neopios-*-image-*.rootfs.manifest artifacts/ || true
           ls -lh artifacts/
 
       - name: Upload artifacts to workflow (always)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: neopios-images-${{ github.ref_name }}
           path: artifacts/
