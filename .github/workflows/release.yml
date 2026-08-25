@@ -37,9 +37,10 @@ jobs:
         run: |
           cd "$NEOPIOS_REPO_DIR"
           podman run --rm \
+            --userns=keep-id \
+            --user ubuntu \
             -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
             -e "LANG=en_US.UTF-8" \
-            --user "$(id -u):$(id -g)" \
             linux-build-wrynose \
             /bin/bash -c '
               set -euo pipefail
@@ -52,9 +53,10 @@ jobs:
         run: |
           cd "$NEOPIOS_REPO_DIR"
           podman run --rm \
+            --userns=keep-id \
+            --user ubuntu \
             -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
             -e "LANG=en_US.UTF-8" \
-            --user "$(id -u):$(id -g)" \
             linux-build-wrynose \
             /bin/bash -c '
               set -euo pipefail
