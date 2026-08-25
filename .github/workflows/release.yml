@@ -66,6 +66,7 @@ jobs:
             '
 
       - name: Collect artifacts
+        id: collect
         run: |
           cd "$NEOPIOS_REPO_DIR"
           rm -rf artifacts
@@ -73,12 +74,13 @@ jobs:
           cp -v build/tmp/deploy/images/raspberrypi4-64/neopios-*-image-*.rootfs.wic.bz2 artifacts/ || true
           cp -v build/tmp/deploy/images/raspberrypi4-64/neopios-*-image-*.rootfs.manifest artifacts/ || true
           ls -lh artifacts/
+          echo "artifact_dir=$(pwd)/artifacts" >> "$GITHUB_OUTPUT"
 
       - name: Upload artifacts to workflow (always)
         uses: actions/upload-artifact@v7
         with:
           name: neopios-images-${{ github.ref_name }}
-          path: ${{ vars.NEOPIOS_REPO_DIR }}/artifacts/
+          path: ${{ steps.collect.outputs.artifact_dir }}/
           if-no-files-found: error
           retention-days: 7
 
