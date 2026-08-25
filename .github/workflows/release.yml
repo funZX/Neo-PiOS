@@ -38,7 +38,6 @@ jobs:
           cd "$NEOPIOS_REPO_DIR"
           podman run --rm \
             -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
-            -e "HOME=/tmp/ci-home" \
             -e "LANG=en_US.UTF-8" \
             --user "$(id -u):$(id -g)" \
             linux-build-wrynose \
@@ -54,7 +53,6 @@ jobs:
           cd "$NEOPIOS_REPO_DIR"
           podman run --rm \
             -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
-            -e "HOME=/tmp/ci-home" \
             -e "LANG=en_US.UTF-8" \
             --user "$(id -u):$(id -g)" \
             linux-build-wrynose \
