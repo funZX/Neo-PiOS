@@ -45,6 +45,7 @@ jobs:
             /bin/bash -c '
               cd /home/ubuntu/workspace
               source layers/openembedded-core/oe-init-build-env build
+              bitbake -c cleansstate neopios-weston-image
               bitbake neopios-weston-image
             '
 
@@ -60,6 +61,7 @@ jobs:
             /bin/bash -c '
               cd /home/ubuntu/workspace
               source layers/openembedded-core/oe-init-build-env build
+              bitbake -c cleansstate neopios-labwc-image
               bitbake neopios-labwc-image
             '
 
