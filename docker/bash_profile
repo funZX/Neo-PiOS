@@ -14,7 +14,7 @@ if [ -f "$HOME/workspace/layers/openembedded-core/oe-init-build-env" ]; then
     # --- Neo-PiOS bitbake aliases (only when OE env available) ---
     BB_COMMAND="bitbake"
     alias bb=${BB_COMMAND}
-    alias bb.clean="bitbake -c clean -c cleansstate"
+    alias bb.clean="bitbake -c cleansstate"
     alias bb.edit="devtool modify"
     alias bb.apply="devtool update-recipe -a ../layers/meta-neopios"
     alias bb.close="devtool reset"
