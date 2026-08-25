@@ -75,7 +75,7 @@ jobs:
           ls -lh artifacts/
 
       - name: Upload artifacts to workflow (always)
-        uses: actions/upload-artifact@v7   # v7 runs on Node 24 (v4 = Node 20, deprecated)
+        uses: actions/upload-artifact@v7
         with:
           name: neopios-images-${{ github.ref_name }}
           path: artifacts/
