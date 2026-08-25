@@ -1,0 +1,90 @@
+name: Build Release Images
+
+# Trigger: push a version tag (YY.MM scheme, e.g. 26.08, 26.11)
+# workflow_dispatch = manual "Run workflow" button (testing without a tag;
+# release upload is skipped for manual runs).
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # required to upload assets to the release
+
+# Self-hosted runner: WSL2 (Gentoo) + podman.
+# - Register once with label 'yocto':
+#     ./config.sh --url https://github.com/funZX/Neo-PiOS --token <TOKEN> --labels yocto
+# - This workflow intentionally skips actions/checkout: the runner's _work
+#   is symlinked to the local clone (warm build/sstate-cache + downloads).
+# - Because there is no checkout, steps must NOT rely on the default cwd
+#   (the runner auto-creates an empty _work/<pipeline>/<repo> dir).
+#   Instead, add the absolute clone path to the runner's .env file:
+#       ~/actions-runner/.env:  NEOPIOS_REPO_DIR=/home/<you>/path/to/Neo-PiOS
+# - Persistent host => first build ~hours, subsequent tag builds ~20-40 min.
+#
+# NOTE: builds use whatever state the local clone is in — keep it on the
+# tagged commit (master) when cutting a release.
+
+jobs:
+  build:
+    name: Build Neo-PiOS images (${{ github.ref_name }})
+    runs-on: [self-hosted, yocto]
+    timeout-minutes: 350
+
+    steps:
+      - name: Build neopios-weston-image
+        run: |
+          cd "$NEOPIOS_REPO_DIR"
+          podman run --rm \
+            -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
+            -e "HOME=/tmp/ci-home" \
+            -e "LANG=en_US.UTF-8" \
+            --user "$(id -u):$(id -g)" \
+            linux-build-wrynose \
+            /bin/bash -c '
+              set -euo pipefail
+              cd /home/ubuntu/workspace
+              source layers/openembedded-core/oe-init-build-env build
+              bitbake neopios-weston-image
+            '
+
+      - name: Build neopios-labwc-image
+        run: |
+          cd "$NEOPIOS_REPO_DIR"
+          podman run --rm \
+            -v "$NEOPIOS_REPO_DIR":/home/ubuntu/workspace \
+            -e "HOME=/tmp/ci-home" \
+            -e "LANG=en_US.UTF-8" \
+            --user "$(id -u):$(id -g)" \
+            linux-build-wrynose \
+            /bin/bash -c '
+              set -euo pipefail
+              cd /home/ubuntu/workspace
+              source layers/openembedded-core/oe-init-build-env build
+              bitbake neopios-labwc-image
+            '
+
+      - name: Collect artifacts
+        run: |
+          cd "$NEOPIOS_REPO_DIR"
+          mkdir -p artifacts
+          cp -v build/tmp/deploy/images/raspberrypi4-64/*.wic.bz2 artifacts/ || true
+          cp -v build/tmp/deploy/images/raspberrypi4-64/*.manifest artifacts/ || true
+          ls -lh artifacts/
+
+      - name: Upload artifacts to workflow (always)
+        uses: actions/upload-artifact@v4
+        with:
+          name: neopios-images-${{ github.ref_name }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Attach images to GitHub release
+        if: ${{ github.event_name == 'push' }}   # tags only; manual runs skip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd "$NEOPIOS_REPO_DIR"
+          gh release upload "${{ github.ref_name }}" artifacts/*.wic.bz2 --clobber
