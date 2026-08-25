@@ -1,0 +1,52 @@
+#!/sbin/openrc-run
+# OpenRC init script for a GitHub Actions self-hosted runner.
+#
+# Target host: Gentoo Linux in WSL2 (no systemd).
+#
+# Install:
+#   1. Configure the runner (as your build user, inside the repo clone's
+#      sibling dir, e.g. ~/actions-runner):
+#        ./config.sh --url https://github.com/funZX/Neo-PiOS \
+#                    --token <TOKEN> --labels yocto
+#      (token from: repo -> Settings -> Actions -> Runners -> New self-hosted)
+#
+#   2. Copy this file to /etc/init.d/github-runner-neopios and edit the
+#      RUNNER_DIR / RUNNER_USER variables below to match your setup.
+#
+#   3. chmod +x /etc/init.d/github-runner-neopios
+#
+#   4. Enable + start:
+#        rc-update add github-runner-neopios default
+#        rc-service github-runner-neopios start
+#
+# Notes:
+#   - A running service keeps the WSL2 VM alive (prevents auto-shutdown).
+#   - Logs land in /var/log/github-runner-neopios.{log,err}.
+#   - Repo must live on the Linux filesystem (~/...), never /mnt/c.
+
+description="GitHub Actions self-hosted runner (Neo-PiOS, label: yocto)"
+
+RUNNER_DIR="${RUNNER_DIR:-/home/build/actions-runner}"
+RUNNER_USER="${RUNNER_USER:-build}"
+
+command="${RUNNER_DIR}/run.sh"
+command_user="${RUNNER_USER}:${RUNNER_USER}"
+directory="${RUNNER_DIR}"
+command_background="yes"
+pidfile="/run/github-runner-neopios.pid"
+output_log="/var/log/github-runner-neopios.log"
+error_log="/var/log/github-runner-neopios.err"
+
+depend() {
+	need localmount
+	after net
+	# podman rootless needs the user session bits up; not strictly required
+	# but avoids races on first boot:
+	after elogind
+}
+
+start_pre() {
+	checkpath -d -m 0755 -o "${RUNNER_USER}:${RUNNER_USER}" /run
+	checkpath -f -m 0644 -o "${RUNNER_USER}:${RUNNER_USER}" \
+		"${output_log}" "${error_log}"
+}
