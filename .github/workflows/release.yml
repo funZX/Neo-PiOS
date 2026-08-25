@@ -66,8 +66,9 @@ jobs:
       - name: Collect artifacts
         run: |
           cd "$NEOPIOS_REPO_DIR"
+          rm -rf artifacts
           mkdir -p artifacts
-          cp -v build/tmp/deploy/images/raspberrypi4-64/*.wic.bz2 artifacts/ || true
+          cp -v build/tmp/deploy/images/raspberrypi4-64/neopios-*-image-*.rootfs.wic.bz2 artifacts/ || true
           cp -v build/tmp/deploy/images/raspberrypi4-64/*.manifest artifacts/ || true
           ls -lh artifacts/
 
