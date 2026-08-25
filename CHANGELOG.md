@@ -50,4 +50,4 @@ and this project adheres to [Ubuntu-style versioning](https://ubuntu.com/about/r
 
 ## Release Notes Links
 
-- [26.08 Release](https://github.com/funZX/Neo-PiOS/releases/tag/26.08) (when published)
+- [26.08 Release](https://github.com/funZX/Neo-PiOS/releases/tag/26.08)
